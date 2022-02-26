@@ -22,5 +22,5 @@
 - [/bili](/ClassBili.md#L1)
     - [x] [/hotword](/ClassBili.md#L1)
     - [x] [/shortlink](/ClassBili.md#L38)
-    - [x] [/videoinfo](/ClassBili.md#L)
+    - [x] [/videoinfo](/ClassBili.md#L87)
 
