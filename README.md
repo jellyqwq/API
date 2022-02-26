@@ -16,12 +16,13 @@
 
 ## API documentation
 
-|description|get bilibili hot search|\|\|
-|-----------|-----------------------|-|-|
-|address|127.0.0.1:6702/bili/bhot|\|\|
-|method|get|\|\|
-|response data(json)|\|\|\|
+### 127.0.0.1:6702/bili/bhot  
+description: get bilibili hot search  
+method: get  
+response data(json)  
+
 |variable name|format|example|description|
+|----------|-----------|---------|-----|
 |status|int|0|status code|
 |result|string|'xxxxx'|message|
 
