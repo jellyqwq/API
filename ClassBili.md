@@ -121,7 +121,7 @@
 
 |variable name|format|example|description|
 |-|-|-|-|
-|status|int|0|status code|
+|status|int||status code|
 |data|dict||As follows|
 |aid|num|||
 |bvid|string|||
@@ -133,8 +133,8 @@
 |reply|num|||
 |favorite|num|||
 |coin|num|||
-|share|61841|||
-|like|300976|||
+|share|num|||
+|like|num|||
 |shortLike|dict||As follows|
 |status|num|||
 |data|string||short link|
