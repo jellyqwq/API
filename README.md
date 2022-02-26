@@ -6,48 +6,16 @@
 |---------------|-----------------------|
 |0              |request success        |
 |-1             |request failure        |
+|-2             |missing request paramenter|
 
-## Response structure in this project
+## Project structure
 
-├ [ClassBili](/ClassBili.py)
+- [ClassBili](/ClassBili.py)
     - [getHotWord](/ClassBili.py#L28)
     - [biliVideoInfo](/ClassBili.py#)
 
-
 ## API documentation
 
-### getHotWord
-
-#### API Description  
-> get bilibili hot words
-
-#### Request URL  
-> [http://127.0.0.1:6702/bili/bhot](http://127.0.0.1:6702/bili/bhot)
-
-#### Request format  
-> None
-
-#### Request Method  
-> GET
-
-#### Request Headers  
-> None  
-
-#### Response format  
-> json 
-
-#### Response
-
-|variable name|format|example|description|
-|-|-|-|-|
-|status|int|0|status code|
-|result|string|'xxxxx'|message|
-
-#### code case
-```
-{
-'status': 0,
-'result': 'xxxxx'
-}
-```
+- [√] [bhot](/ClassBili.md#L1)
+- [ ] [whot](/ClassBili.md#)
 

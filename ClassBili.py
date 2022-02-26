@@ -51,13 +51,13 @@ class Bili(object):
                 message += i[2]
             return {
                 'status': 0,
-                'message': message
+                'data': message
             }
         else:
             logging.error(response['code'],'Failed to get hot search')
             return {
                 'status': -1,
-                'message':'Failed to get hot search'
+                'data':'Failed to get hot search'
                 }
     
     def toBiliShortUrl(self, url):
@@ -76,17 +76,17 @@ class Bili(object):
             logging.info('shareUrl response:{}'.format(response))
             return {
                 'status': 0,
-                'result':response['data']['content']
+                'data':response['data']['content']
                 }
         except:
-            logging.error('短链转换失败')
+            logging.error('Failed to transform short link')
             return {
                 'status': -1,
-                'result': url
+                'data': url
                 }
 
     def biliVideoInfo(self, abcode):  
-        logging.info('biliVideoInfo abcode: {}@'.format(abcode))
+        logging.info('biliVideoInfo abcode: {}'.format(abcode))
         if 'BV' in abcode or 'bv' in abcode:
             bvid = abcode
             logging.info('bvid:{}'.format(bvid))
