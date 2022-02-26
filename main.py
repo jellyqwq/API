@@ -10,7 +10,7 @@ api = flask.Flask(__name__)
 def hotword():
     from ClassBili import Bili
     b = Bili()
-    return json.dumps(b.getHotWord())
+    return json.dumps(b.getHotWord(), ensure_ascii=False)
 
 @api.route('/bili/shortlink', methods=['POST'])
 def shortlink():
@@ -24,32 +24,32 @@ def shortlink():
                 'status': 0,
                 'data': r['data']
             }
-            return json.dumps(x)
+            return json.dumps(x, ensure_ascii=False)
         else:
             x = {
                 'status': -1,
                 'data': r['data']
             }
-            return json.dumps(x)
+            return json.dumps(x, ensure_ascii=False)
     else:
         x = {
             'status': -2,
             'data': 'Post paramenter can not null'
         }
-        return json.dumps(x)
+        return json.dumps(x, ensure_ascii=False)
 
 @api.route('/bili/videoinfo', methods=['POST'])
 def videoinfo():
     from ClassBili import Bili
     b = Bili()
     abcode =  flask.request.args.get('abcode')
-    return json.dumps(b.biliVideoInfo(abcode))
+    return json.dumps(b.biliVideoInfo(abcode), ensure_ascii=False)
 
 @api.route('/weibo/hotword', methods=['GET'])
-def hotword():
+def wbhotword():
     from ClassWb import Weibo
     w = Weibo()
-    return json.dumps(w.getHotWord)
+    return json.dumps(w.getHotWord(), ensure_ascii=False)
 
 if __name__ == '__main__':
     api.run(port=6702, debug=True, host='0.0.0.0')
