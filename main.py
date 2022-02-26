@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-import flask
+from flask import Flask
 import json
 
-api = flask.Flask(__name__)
+api = Flask(__name__)
 
 @api.route('/bhot', methods=['GET', 'POST'])
 def bhot():
