@@ -73,7 +73,6 @@ class Bili(object):
             }
         try:
             response = requests.post(shareUrl, data).json()
-            logging.info('shareUrl response:{}'.format(response))
             return {
                 'status': 0,
                 'data':response['data']['content']
@@ -86,55 +85,57 @@ class Bili(object):
                 }
 
     def biliVideoInfo(self, abcode):  
-        logging.info('biliVideoInfo abcode: {}'.format(abcode))
         if 'BV' in abcode or 'bv' in abcode:
             bvid = abcode
-            logging.info('bvid:{}'.format(bvid))
             response = requests.get('https://api.bilibili.com/x/web-interface/view?bvid={}'.format(bvid), headers=self.headers)
         elif 'AV' in abcode or 'av' in abcode:
             aid = abcode[2:]
-            logging.info('aid:{}'.format(aid))
             response = requests.get('http://api.bilibili.com/x/web-interface/view?aid={}'.format(aid), headers=self.headers)
         else:
-            logging.error(abcode)
-            return {'status': '快去写正则(╬▔皿▔)凸'}
-        logging.info(response.json())
+            logging.error('abcode: {}'.format(abcode))
+            return {
+                'status': -3
+                }
         if response.json()['code'] == 0:
             data = response.json()['data']
-            logging.info('data:{}'.format(data))
+            stat = data['stat']
             bvid = data['bvid']
-            logging.info('bvid:{}'.format(bvid))
-            videoFace = data['pic']
-            videoTitle = data['title']
-            videoDescription = data['desc']
+            aid = stat['aid']
+            face = data['pic']
+            title = data['title']
+            desc = data['desc']
+            view = stat['view']
+            danmaku = stat['danmaku']
+            reply = stat['reply']
+            favorite = stat['favorite']
+            coin = stat['coin']
+            share = stat['share']
+            like = stat['like']
             shortLink = self.toBiliShortUrl('https://www.bilibili.com/video/{}'.format(abcode))
-            logging.info('shortLink:{}'.format(shortLink['result']))
             return {
                 'status': 0,
-                'result': '标题:{}\n{}\n简介:{}\n链接:{}'.format(videoTitle, '[CQ:image,file={}]'.format(videoFace), videoDescription, shortLink['result'])
+                'data': {
+                    'aid': aid,
+                    'bvid': bvid,
+                    'face': face,
+                    'title': title,
+                    'desc': desc,
+                    'view': view,
+                    'danmaku': danmaku,
+                    'reply': reply,
+                    'favorite': favorite,
+                    'coin': coin,
+                    'share': share,
+                    'like': like,
+                    'shortLink': shortLink,
+                }
             }
-        elif response.json()['code'] == -400:
-            logging.error('请求错误QwQ')
-            return {'status': '请求错误QwQ'}
-        elif response.json()['code'] == -403:
-            logging.error('权限不足')
-            return {'status': '权限不足'}
-        elif response.json()['code'] == -404:
-            logging.error('无视频ㄟ( ▔, ▔ )ㄏ')
-            return {'status': '无视频ㄟ( ▔, ▔ )ㄏ'}
-        elif response.json()['code'] == 62002:
-            logging.error('稿件不可见')
-            return {'status': '稿件不可见'}
-
-
-    
-
-
-
-
-
-
-
+        else:
+            logging.error(response.json()['code'])
+            return {
+                'status': -4,
+                'data': 'Failed to get video info, please inquire bili status codes to get help'
+            }
 
     def getDynamicInfo(self, dynamic_id):
         dynamicUrl = 'https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/get_dynamic_detail?dynamic_id={}'.format(dynamic_id)
@@ -169,7 +170,7 @@ class Bili(object):
 if __name__ == '__main__':
     paib = Bili()
     # a = paib.getDynamicInfo('627397887615151994')##627795919422504831
-    a = paib.biliVideoInfo('BV1GJ411x7h7')
+    a = paib.biliVideoInfo('av509305074')
     print(a)
 
 
