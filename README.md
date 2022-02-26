@@ -9,24 +9,41 @@
 
 ## Response structure in this project
 
-- [ClassBili](/ClassBili.py)
-    - [toBiliShortUrl](/ClassBili.py#L28)
+├ [ClassBili](/ClassBili.py)
+    - [getHotWord](/ClassBili.py#L28)
     - [biliVideoInfo](/ClassBili.py#)
 
 
 ## API documentation
 
-### 127.0.0.1:6702/bili/bhot  
-description: get bilibili hot search  
-method: get  
-response data(json)  
+### getHotWord
+
+#### API Description  
+> get bilibili hot words
+
+#### Request URL  
+> [http://127.0.0.1:6702/bili/bhot](http://127.0.0.1:6702/bili/bhot)
+
+#### Request format  
+> None
+
+#### Request Method  
+> GET
+
+#### Request Headers  
+> None  
+
+#### Response format  
+> json 
+
+#### Response
 
 |variable name|format|example|description|
-|----------|-----------|---------|-----|
+|-|-|-|-|
 |status|int|0|status code|
 |result|string|'xxxxx'|message|
 
-code case
+#### code case
 ```
 {
 'status': 0,
