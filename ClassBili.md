@@ -23,13 +23,13 @@
 |variable name|format|example|description|
 |-|-|-|-|
 |status|int|0|status code|
-|data|string|'xxxxx'|message|
+|data|string|"xxxxx"|message|
 
 #### Code Example
 ```
 {
-'status': 0,
-'data': 'xxxxx'
+"status": 0,
+"data": "xxxxx"
 }
 ```
 
@@ -59,12 +59,12 @@
 
 |variable name|format|example|description|
 |-|-|-|-|
-|url|string|'https://xxx.bilibili.com/xxx'|url belong bilibili domain|
+|url|string|"https://xxx.bilibili.com/xxx"|url belong bilibili domain|
 
 #### Code Example
 ```
 {
-    'url': 'https://xxx.bilibili.com/xxx'
+    "url": "https://xxx.bilibili.com/xxx"
 }
 ```
 #### Response Paramenter
@@ -72,13 +72,13 @@
 |variable name|format|example|description|
 |-|-|-|-|
 |status|int|0|status code|
-|data|string|'https://b23.tv/xxxx'|message|
+|data|string|"https://b23.tv/xxxx"|message|
 
 #### Code Example
 ```
 {
-    'status': 0,
-    'data': 'https://b23.tv/xxxx',
+    "status": 0,
+    "data": "https://b23.tv/xxxx",
 }
 ```
 
@@ -99,7 +99,7 @@
 > POST
 
 #### Request Headers  
-> None 
+> None  
 
 #### Response Format  
 > json 
@@ -108,4 +108,58 @@
 
 |variable name|format|example|description|
 |-|-|-|-|
-|url|string|'https://xxx.bilibili.com/xxx'|url belong bilibili domain|
+|abcode|string|"av706"|av(AV) or bv(BV) code|
+
+#### Code Example
+```
+{
+    "abcode": "av706"
+}
+```
+
+#### Response Paramenter
+
+|variable name|format|example|description|
+|-|-|-|-|
+|status|int|0|status code|
+|data|dict||As follows|
+|aid|num|||
+|bvid|string|||
+|face|string|||
+|title|string|||
+|desc|string||description|
+|view|num|||
+|danmaku|num|||
+|reply|num|||
+|favorite|num|||
+|coin|num|||
+|share|61841|||
+|like|300976|||
+|shortLike|dict||As follows|
+|status|num|||
+|data|string||short link|
+
+#### Code Example
+```
+{
+    "status": 0,
+    "data": {
+        "aid": 706,
+        "bvid": "BV1xx411c79H",
+        "face": "http://i1.hdslb.com/bfs/archive/753453a776fca838165a52c7511e8557857b61ea.jpg",
+        "title": "【東方】Bad Apple!! ＰＶ【影絵】",
+        "desc": "sm8628149 2011/9/25追记：大家如果看到空耳字幕请果断举报，净化弹幕环境，你我有责，感谢。",
+        "view": 7767392,
+        "danmaku": 76512,
+        "reply": 335009,
+        "favorite": 397892,
+        "coin": "139095",
+        "share": 61841,
+        "like": 300976,
+        "shortLink": {
+            "status": 0,
+            "data": "https://b23.tv/kucPLME"
+        }
+    }
+}
+```

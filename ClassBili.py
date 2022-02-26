@@ -94,7 +94,8 @@ class Bili(object):
         else:
             logging.error('abcode: {}'.format(abcode))
             return {
-                'status': -3
+                'status': -3,
+                'data': 'abcode error'
                 }
         if response.json()['code'] == 0:
             data = response.json()['data']
@@ -170,7 +171,7 @@ class Bili(object):
 if __name__ == '__main__':
     paib = Bili()
     # a = paib.getDynamicInfo('627397887615151994')##627795919422504831
-    a = paib.biliVideoInfo('av509305074')
+    a = paib.biliVideoInfo('av706')
     print(a)
 
 
