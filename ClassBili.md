@@ -121,23 +121,23 @@
 
 |variable name|format|example|description|
 |-|-|-|-|
-|status|int||status code|
+|status|int|0|status code|
 |data|dict||As follows|
-|aid|num|||
-|bvid|string|||
-|face|string|||
-|title|string|||
-|desc|string||description|
-|view|num|||
-|danmaku|num|||
-|reply|num|||
-|favorite|num|||
-|coin|num|||
-|share|num|||
-|like|num|||
+|aid|num|706||
+|bvid|string|"BV1xx411c79H"||
+|face|string|"http://i1.hdslb.com/bfs/archive/753453a776fca838165a52c7511e8557857b61ea.jpg"|video face image|
+|title|string|"【東方】Bad Apple!! ＰＶ【影絵】', 'd Apple!! ＰＶ【影絵】"||
+|desc|string|"sm8628149 2011/9/25追记：大家如果看到空耳字幕请果断举报，净化弹幕环境，你我有责，感谢。"|description|
+|view|num|7767392||
+|danmaku|num|76512||
+|reply|num|335009||
+|favorite|num|397892||
+|coin|num|139095||
+|share|num|61841||
+|like|num|300976||
 |shortLike|dict||As follows|
-|status|num|||
-|data|string||short link|
+|status|num|0||
+|data|string|"https://b23.tv/kucPLME"|short link|
 
 #### Code Example
 ```
