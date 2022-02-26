@@ -84,3 +84,28 @@
 
 ***
 
+### biliVideoInfo
+
+#### API Description
+> get bili video information
+
+#### Request URL
+> [http://127.0.0.1:6702/bili/videoinfo](http://127.0.0.1:6702/bili/videoinfo)
+
+#### Request Format  
+> json
+
+#### Request Method
+> POST
+
+#### Request Headers  
+> None 
+
+#### Response Format  
+> json 
+
+#### Request Paramenter
+
+|variable name|format|example|description|
+|-|-|-|-|
+|url|string|'https://xxx.bilibili.com/xxx'|url belong bilibili domain|
