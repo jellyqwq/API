@@ -19,8 +19,8 @@
 
 ## API documentation
 
-- [/bili](/ClassBili.md#L1)
-    - [x] [/hotword](/ClassBili.md#L1)
-    - [x] [/shortlink](/ClassBili.md#L38)
-    - [x] [/videoinfo](/ClassBili.md#L87)
+- [/bili](/ClassBili.md)
+    - [x] [/hotword](/ClassBili.md#gethotword)
+    - [x] [/shortlink](/ClassBili.md#toBiliShortUrl)
+    - [x] [/videoinfo](/ClassBili.md#biliVideoInfo)
 
