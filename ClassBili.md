@@ -28,8 +28,8 @@
 #### Code Example
 ```json
 {
-"status": 0,
-"data": "xxxxx"
+    "status": 0,
+    "data": "xxxxx"
 }
 ```
 
