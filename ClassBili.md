@@ -140,7 +140,7 @@
 |data|string|"https://b23.tv/kucPLME"|short link|
 
 #### Code Example
-```
+```json
 {
     "status": 0,
     "data": {
