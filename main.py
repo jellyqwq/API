@@ -6,8 +6,8 @@ import json
 # https://flask.palletsprojects.com/en/2.0.x/quickstart/
 api = flask.Flask(__name__)
 
-@api.route('/bili/bhot', methods=['GET'])
-def bhot():
+@api.route('/bili/hotword', methods=['GET'])
+def hotword():
     from ClassBili import Bili
     b = Bili()
     return json.dumps(b.getHotWord())

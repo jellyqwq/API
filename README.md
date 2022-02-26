@@ -12,10 +12,11 @@
 
 - [ClassBili](/ClassBili.py)
     - [getHotWord](/ClassBili.py#L28)
-    - [biliVideoInfo](/ClassBili.py#)
+    - [toBiliShortUrl](/ClassBili.py#63)
 
 ## API documentation
 
-- [√] [bhot](/ClassBili.md#L1)
-- [ ] [whot](/ClassBili.md#)
+- [/bili](/ClassBili.md#L1)
+    - [x] [/hotword](/ClassBili.md#L1)
+    - [ ] [/shortlink](/ClassBili.md#L38)
 
