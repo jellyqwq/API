@@ -26,7 +26,7 @@
 |data|string|"xxxxx"|message|
 
 #### Code Example
-```
+```json
 {
 "status": 0,
 "data": "xxxxx"
@@ -62,7 +62,7 @@
 |url|string|"https://xxx.bilibili.com/xxx"|url belong bilibili domain|
 
 #### Code Example
-```
+```json
 {
     "url": "https://xxx.bilibili.com/xxx"
 }
@@ -75,7 +75,7 @@
 |data|string|"https://b23.tv/xxxx"|message|
 
 #### Code Example
-```
+```json
 {
     "status": 0,
     "data": "https://b23.tv/xxxx",
@@ -111,7 +111,7 @@
 |abcode|string|"av706"|av(AV) or bv(BV) code|
 
 #### Code Example
-```
+```json
 {
     "abcode": "av706"
 }
