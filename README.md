@@ -14,8 +14,8 @@
 
 - [ClassBili](/ClassBili.py)
     - [getHotWord](/ClassBili.py#L28)
-    - [toBiliShortUrl](/ClassBili.py#63)
-    - [biliVideoInfo](/ClassBili.py#87)
+    - [toBiliShortUrl](/ClassBili.py#L63)
+    - [biliVideoInfo](/ClassBili.py#L87)
 
 ## API documentation
 
