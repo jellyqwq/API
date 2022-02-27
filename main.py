@@ -45,16 +45,16 @@ def videoinfo():
     abcode =  flask.request.args.get('abcode')
     return json.dumps(b.biliVideoInfo(abcode), ensure_ascii=False)
 
-@api.route('/bili/dynamicinfo', methods=['get'])
+@api.route('/bili/dynamicinfo', methods=['GET'])
 def dynamicinfo():
     from ClassBili import Bili
     b = Bili()
-    url = flask.request.args.get('url')
-    return json.dumps(b.getDynamicInfo(url), ensure_ascii=False)
+    did = flask.request.args.get('id')
+    return json.dumps(b.getDynamicInfo(did), ensure_ascii=False)
 
 @api.route('/weibo/hotword', methods=['GET'])
 def wbhotword():
-    from ClassWb import Weibo
+    from ClassWeiBo import Weibo
     w = Weibo()
     return json.dumps(w.getHotWord(), ensure_ascii=False)
 

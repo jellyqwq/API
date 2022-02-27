@@ -198,8 +198,8 @@ http://127.0.0.1:6702/bili/dynamicinfo?id=627795919422504831
 |variable name|format|description|
 |-|-|-|
 |status|int|status code|
-|type|num|[dynamic type](#L204)|
-|data|obj|[dynamic data](#212)|
+|type|num|[dynamic type](#dynamic-type)|
+|data|obj|[dynamic data](#dynamic-data)|
 
 #### Dynamic type
 
