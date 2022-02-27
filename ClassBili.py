@@ -31,7 +31,7 @@ class Bili(object):
         if response['code'] == 0:
             logging.info('Get hot search success')
             timestamp = response['timestamp']
-            HotWordTime = time.strftime("%a %b %d %H:%M:%S %Y", time.localtime(timestamp))
+            HotWordTime = time.strftime("Y-%m-%d %H:%M %a", time.localtime(timestamp))
             HotWordLsit =[]
             for li in response['list']:
                 if li['word_type'] == 5:
@@ -141,37 +141,89 @@ class Bili(object):
     def getDynamicInfo(self, dynamic_id):
         dynamicUrl = 'https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/get_dynamic_detail?dynamic_id={}'.format(dynamic_id)
         response = requests.get(dynamicUrl).json()
+        # logging.info(response)
 
-        # 图片动态
+        # image dynamic
         if response['data']['card']['desc']['type'] == 2:
             if response['code'] == 0:
-                uname = response['data']['card']['desc']['user_profile']['info']['uname']
+                desc = response['data']['card']['desc']
+                uname = desc['user_profile']['info']['uname']
                 card = response['data']['card']['card']
-                card = str(json.loads(card))
-                logging.info(card)
-                imageList = re.findall(r'https://i0.hdslb.com/bfs/album/[0-9a-z]+\.(?:png|jpg)', card)
-                description = re.findall(r''''description': (.*?), 'id''', card)[0]
-                logging.info(uname)
-                description = description[1:-1]
-                logging.info(description)
-                
-                logging.info(imageList)
+                uid = desc['uid']
+                view = desc['view']
+                repost = desc['repost']
+                comment = desc['comment']
+                like = desc['like']
+                timestamp = time.strftime("%Y-%m-%d %H:%M", time.localtime(desc['timestamp']))
+                card = json.loads(card)
+                pictures = card['item']['pictures']
+                imageList = []
+                for image in pictures:
+                    imageList.append(image['img_src'])
+                content = card['item']['description']
                 return {
                     'status': 0,
-                    'uname': uname,
-                    'description': description,
-                    'imageList': imageList
+                    'data': {
+                        'uid': uid,
+                        'uname': uname,
+                        'view': view,
+                        'repost': repost,
+                        'comment': comment,
+                        'like': like,
+                        'timestamp': timestamp,
+                        'content': content,
+                        'imageList': imageList
+                    }
                 }
-                
             else:
-                return {'status': -1, 'result': response['code']}
+                return {
+                    'status': -4,
+                    'data': response['code']
+                    }
+        
+        # word dynamic
+        elif response['data']['card']['desc']['type'] == 4:
+            if response['code'] == 0:
+                desc = response['data']['card']['desc']
+                uname = desc['user_profile']['info']['uname']
+                card = response['data']['card']['card']
+                uid = desc['uid']
+                view = desc['view']
+                repost = desc['repost']
+                comment = desc['comment']
+                like = desc['like']
+                timestamp = time.strftime("%Y-%m-%d %H:%M", time.localtime(desc['timestamp']))
+                card = json.loads(card)
+                content = card['item']['content']
+                return {
+                    'status': 0,
+                    'data': {
+                        'uid': uid,
+                        'uname': uname,
+                        'view': view,
+                        'repost': repost,
+                        'comment': comment,
+                        'like': like,
+                        'timestamp': timestamp,
+                        'content': content
+                    }
+                }
+            else:
+                return {
+                    'status': -4,
+                    'data': response['code']
+                    }
+
+            
+
         else:
             return {'status': -1, 'result': '该动态类型未完善'}
 
 if __name__ == '__main__':
     paib = Bili()
-    # a = paib.getDynamicInfo('627397887615151994')##627795919422504831
-    a = paib.biliVideoInfo('av706')
+    # a = paib.getDynamicInfo('594877314370747257')##627795919422504831
+    a = paib.getDynamicInfo('631421997174226993')##627795919422504831
+    # a = paib.biliVideoInfo('av706')
     print(a)
 
 
