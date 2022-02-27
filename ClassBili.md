@@ -238,7 +238,7 @@ http://127.0.0.1:6702/bili/dynamicinfo?id=627795919422504831
         "like": 3286, 
         "time": "2022-02-16 18:48", 
         "content": "I became 狮子!! ", 
-        "imageList": ['https://i0.hdslb.com/bfs/album/64c2d68a6fcd89ae1a97d960a72742442dde8bbd.png']
+        "imageList": ["https://i0.hdslb.com/bfs/album/64c2d68a6fcd89ae1a97d960a72742442dde8bbd.png"]
     }
 }
 ```
