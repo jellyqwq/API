@@ -25,5 +25,6 @@
     - [x] [/shortlink](/ClassBili.md#toBiliShortUrl)
     - [x] [/videoinfo](/ClassBili.md#biliVideoInfo)
     - [x] [/dynamicinfo](/ClassBili.md#getDynamicInfo)
-- [/weibo](/ClassBili.md)
+- [/weibo](/ClassWeiBo.md)
+    - [x] [/hotword](/ClassWeiBo.md#gethotword)
 
