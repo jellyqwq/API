@@ -163,6 +163,7 @@ class Bili(object):
                 content = card['item']['description']
                 return {
                     'status': 0,
+                    'type': 2,
                     'data': {
                         'uid': uid,
                         'uname': uname,
@@ -170,7 +171,7 @@ class Bili(object):
                         'repost': repost,
                         'comment': comment,
                         'like': like,
-                        'timestamp': timestamp,
+                        'time': timestamp,
                         'content': content,
                         'imageList': imageList
                     }
@@ -197,6 +198,7 @@ class Bili(object):
                 content = card['item']['content']
                 return {
                     'status': 0,
+                    'type': 4,
                     'data': {
                         'uid': uid,
                         'uname': uname,
@@ -204,7 +206,7 @@ class Bili(object):
                         'repost': repost,
                         'comment': comment,
                         'like': like,
-                        'timestamp': timestamp,
+                        'time': timestamp,
                         'content': content
                     }
                 }
@@ -214,15 +216,13 @@ class Bili(object):
                     'data': response['code']
                     }
 
-            
-
         else:
             return {'status': -1, 'result': '该动态类型未完善'}
 
 if __name__ == '__main__':
     paib = Bili()
     # a = paib.getDynamicInfo('594877314370747257')##627795919422504831
-    a = paib.getDynamicInfo('631421997174226993')##627795919422504831
+    a = paib.getDynamicInfo('627795919422504831')#631421997174226993#
     # a = paib.biliVideoInfo('av706')
     print(a)
 

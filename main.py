@@ -12,7 +12,7 @@ def hotword():
     b = Bili()
     return json.dumps(b.getHotWord(), ensure_ascii=False)
 
-@api.route('/bili/shortlink', methods=['POST'])
+@api.route('/bili/shortlink', methods=['get'])
 def shortlink():
     from ClassBili import Bili
     b = Bili()
@@ -38,12 +38,19 @@ def shortlink():
         }
         return json.dumps(x, ensure_ascii=False)
 
-@api.route('/bili/videoinfo', methods=['POST'])
+@api.route('/bili/videoinfo', methods=['GET'])
 def videoinfo():
     from ClassBili import Bili
     b = Bili()
     abcode =  flask.request.args.get('abcode')
     return json.dumps(b.biliVideoInfo(abcode), ensure_ascii=False)
+
+@api.route('/bili/dynamicinfo', methods=['get'])
+def dynamicinfo():
+    from ClassBili import Bili
+    b = Bili()
+    url = flask.request.args.get('url')
+    return json.dumps(b.getDynamicInfo(url), ensure_ascii=False)
 
 @api.route('/weibo/hotword', methods=['GET'])
 def wbhotword():

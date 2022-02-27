@@ -23,7 +23,7 @@
 |variable name|format|example|description|
 |-|-|-|-|
 |status|int|0|status code|
-|data|string|"xxxxx"|message|
+|data|string|xxxxx|message|
 
 #### Code Example
 ```json
@@ -41,13 +41,13 @@
 > bili url transform a short link 
 
 #### Request URL
-> [http://127.0.0.1:6702/bili/shortlink](http://127.0.0.1:6702/bili/shortlink)
+> [http://127.0.0.1:6702/bili/shortlink?url=](http://127.0.0.1:6702/bili/shortlink)
 
 #### Request Format  
-> json
+> URL
 
 #### Request Method
-> POST
+> GET
 
 #### Request Headers  
 > None 
@@ -59,13 +59,11 @@
 
 |variable name|format|example|description|
 |-|-|-|-|
-|url|string|"https://xxx.bilibili.com/xxx"|url belong bilibili domain|
+|url|string|https://xxx.bilibili.com/xxx|url belong bilibili domain|
 
 #### Code Example
-```json
-{
-    "url": "https://xxx.bilibili.com/xxx"
-}
+```
+http://127.0.0.1:6702/bili/shortlink?url=https://xxx.bilibili.com/xxx
 ```
 #### Response Paramenter
 
@@ -90,13 +88,13 @@
 > get bili video information
 
 #### Request URL
-> [http://127.0.0.1:6702/bili/videoinfo](http://127.0.0.1:6702/bili/videoinfo)
+> [http://127.0.0.1:6702/bili/videoinfo?abcode=](http://127.0.0.1:6702/bili/videoinfo)
 
 #### Request Format  
-> json
+> URL
 
 #### Request Method
-> POST
+> GET
 
 #### Request Headers  
 > None  
@@ -108,13 +106,11 @@
 
 |variable name|format|example|description|
 |-|-|-|-|
-|abcode|string|"av706"|av(AV) or bv(BV) code|
+|abcode|string|av706|av(AV) or bv(BV) code|
 
 #### Code Example
-```json
-{
-    "abcode": "av706"
-}
+```
+http://127.0.0.1:6702/bili/videoinfo?abcode=av706
 ```
 
 #### Response Paramenter
@@ -166,3 +162,83 @@
 
 ***
 
+### getDynamicInfo
+
+#### API Description
+> get bili dynamic information
+
+#### Request URL
+> [http://127.0.0.1:6702/bili/dynamicinfo?id=](http://127.0.0.1:6702/bili/dynamicinfo?id=)
+
+#### Request Format  
+> URL
+
+#### Request Method
+> GET
+
+#### Request Headers  
+> None  
+
+#### Response Format  
+> json 
+
+#### Request Paramenter
+
+|variable name|format|example|description|
+|-|-|-|-|
+|id|num|627795919422504831|dynamic id|
+
+#### Code Example
+```
+http://127.0.0.1:6702/bili/dynamicinfo?id=627795919422504831
+```
+
+#### Response Paramenter
+
+|variable name|format|description|
+|-|-|-|
+|status|int|status code|
+|type|num|[dynamic type](#L204)|
+|data|obj|[dynamic data](#212)|
+
+#### Dynamic type
+
+|dynamic type|description|
+|-|-|
+|1|repost|
+|2|image dynamic|
+|4|word dynamic|
+
+#### Dynamic data
+
+|variable name|format|description|
+|-|-|-|
+|uid|num|up id|
+|uname|string|up name|
+|view|num||
+|repost|num||
+|comment|num||
+|like|num||
+|time|string||
+|content|string||
+|imageList|list|Appears only with pictures|
+
+#### Code Example
+
+```json
+{
+    "status": 0, 
+    "type": 2, 
+    "data": {
+        "uid": 1042854135, 
+        "uname": "ShizukouOfficial", 
+        "view": 76598, 
+        "repost": 15, 
+        "comment": 202, 
+        "like": 3286, 
+        "time": "2022-02-16 18:48", 
+        "content": "I became 狮子!! ", 
+        "imageList": ['https://i0.hdslb.com/bfs/album/64c2d68a6fcd89ae1a97d960a72742442dde8bbd.png']
+    }
+}
+```
