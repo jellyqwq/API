@@ -16,7 +16,7 @@ def hotword():
 def shortlink():
     from ClassBili import Bili
     b = Bili()
-    url =  flask.request.args.get('url')
+    url =  flask.request.values.get('url')
     if url:
         r = b.toBiliShortUrl(url)
         if r['status'] == 0:
@@ -42,14 +42,14 @@ def shortlink():
 def videoinfo():
     from ClassBili import Bili
     b = Bili()
-    abcode =  flask.request.args.get('abcode')
+    abcode =  flask.request.values.get('abcode')
     return json.dumps(b.biliVideoInfo(abcode), ensure_ascii=False)
 
 @api.route('/bili/dynamicinfo', methods=['GET'])
 def dynamicinfo():
     from ClassBili import Bili
     b = Bili()
-    did = flask.request.args.get('id')
+    did = flask.request.values.get('id')
     return json.dumps(b.getDynamicInfo(did), ensure_ascii=False)
 
 @api.route('/weibo/hotword', methods=['GET'])
