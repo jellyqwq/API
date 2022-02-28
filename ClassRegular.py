@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-#!/usr/bin/env python
 
 import re
 import logging
@@ -11,40 +10,40 @@ class Regular(object):
         pass
 
     def biliVideoUrl(self, message):
-        '''
-        返回bilibili.com域名下的视频av/bv地址\n
-        status  result\n
-        0       正常\n
-        -1      匹配失败\n
-        '''
         try:
             patternBili = re.compile(r'video/([a-zA-Z0-9]+)')
-            result = re.findall(patternBili, message)[0]
-            logging.info('abcode:{}'.format(result))
-            return {'status': 0, 'result': result}
+            abcode = re.findall(patternBili, message)[0]
+            # logging.info('abcode:{}'.format(abcode))
+            return {
+                'status': 0, 
+                'data': abcode
+                }
         except:
             logging.error('biliVideoUrl match failed(+_+)?')
-            return {'status': -1,'result': 'biliVideoUrl match failed(+_+)?'}
+            return {
+                'status': -5,
+                'data': 'biliVideoUrl match failed(+_+)?'
+                }
 
     def biliShortUrl(self, message):
-        '''
-        返回b23.tv域名下的b站(视频)地址\n
-        status  result\n
-        0       正常\n
-        -1      匹配失败\n
-        '''
         try:
             patternBiliShortLink = re.compile(r'http(s)://b23.tv/[a-zA-Z0-9]+')
             biliShortLinkUrl = re.search(patternBiliShortLink, message).group()
-            logging.info('biliShortLinkUrl:{}'.format(biliShortLinkUrl))
-            response = requests.get(biliShortLinkUrl, allow_redirects=False)
+            # logging.info('biliShortLinkUrl:{}'.format(biliShortLinkUrl))
+            response = requests.get(biliShortLinkUrl, allow_redirects=False) #关闭重定向,取请求标头
             response = dict(response.headers)
             response = response['Location']
             logging.info('biliShortUrl Redirects:{}'.format(response))
-            return {'status': 0, 'result': response}
+            return {
+                'status': 0, 
+                'data': response
+                }
         except:
             logging.error('biliShortUrl match failed(+_+)?')
-            return {'status': -1,'result': 'biliShortUrl match failed(+_+)?'}
+            return {
+                'status': -5,
+                'data': 'biliShortUrl match failed(+_+)?'
+                }
 
     def biliDynamicId(self, message):
         '''
