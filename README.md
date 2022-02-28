@@ -24,13 +24,13 @@
 ## API documentation
 
 - [/bili](/ClassBili.md)
-    - [x] [/hotword](/ClassBili.md#gethotword)获取b站热搜
-    - [x] [/shortlink?url=](/ClassBili.md#toBiliShortUrl)生成b站短链
-    - [x] [/videoinfo?abcode=](/ClassBili.md#biliVideoInfo)通过abcode获取视频信息
-    - [x] [/dynamicinfo?id=](/ClassBili.md#getDynamicInfo)通过动态id获取动态信息
+    - [x] [/hotword](/ClassBili.md#gethotword) 获取b站热搜
+    - [x] [/shortlink?url=](/ClassBili.md#toBiliShortUrl) 生成b站短链
+    - [x] [/videoinfo?abcode=](/ClassBili.md#biliVideoInfo) 通过abcode获取视频信息
+    - [x] [/dynamicinfo?id=](/ClassBili.md#getDynamicInfo) 通过动态id获取动态信息
 - [/weibo](/ClassWeiBo.md)
-    - [x] [/hotword](/ClassWeiBo.md#gethotword)获取微博热搜
-- [/parse]
-    - [x] [/abcode?url=]将b站域名下的视频url提取av或bv号
-    - [x] [/b23?url=]将b23.tv域名下的重定向地址返回
+    - [x] [/hotword](/ClassWeiBo.md#gethotword) 获取微博热搜
+- [/parse](/README.md)
+    - [x] [/abcode?url=](/README.md) 将b站域名下的视频url提取av或bv号
+    - [x] [/b23?url=](/README.md) 将b23.tv域名下的重定向地址返回
 
