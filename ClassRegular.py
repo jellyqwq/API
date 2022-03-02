@@ -3,6 +3,9 @@
 import re
 import logging
 import requests
+import os
+import time
+
 logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
 
 class Regular(object):
@@ -66,9 +69,13 @@ class Regular(object):
     def getCQImageUrl(self, message):
         try:
             url = re.search(r'url=(.*),subType',message).groups()[0]
+            os.makedirs('./CQImageUrl/', exist_ok=True)
+            with open('./CQImageUrl/{}.txt'.format(time.strftime("%Y-%m", time.localtime(time.time()))), 'a', encoding='utf-8') as f:
+                f.write(url)
+                f.write('\n')
             return {
                 'status': 0,
-                'data': url
+                'data': '保存成功'
             }
         except:
             logging.error('CQ图url匹配失败')
@@ -76,9 +83,28 @@ class Regular(object):
                 'status': -5,
                 'data': 'CQ图url匹配失败'
             }
+    
+    def getCQImageUrlInfo(self):
+        try:
+            from itertools import (takewhile, repeat)
+            buffer = 1024 * 1024
+            t =time.strftime("%Y-%m", time.localtime(time.time()))
+            with open('./CQImageUrl/{}.txt'.format(t), encoding='utf-8') as f:
+                buf_gen = takewhile(lambda x: x, (f.read(buffer) for _ in repeat(None)))
+                message = t + '保存图片' + str(sum(buf.count('\n') for buf in buf_gen)) + '张'
+            return {
+                'status': 0,
+                'data': message
+            }
+        except:
+            return {
+                'status': -5,
+                'data': '查询失败'
+            }
 
 if __name__ == '__main__':
-    x = '[CQ:image,file=7abbd899e3fef4a9fe53dde0d5c77a99.image,url=https://gchat.qpic.cn/gchatpic_new/1541986714/649451770-2433486197-7ABBD899E3FEF4A9FE53DDE0D5C77A99/0?term=3,subType=0]'
-    y=re.search(r'url=(.*),subType',x).groups()[0]
-    
+    z = Regular().getCQImageUrl('[CQ:image,file=7abbd899e3fef4a9fe53dde0d5c77a99.image,url=https://gchat.qpic.cn/gchatpic_new/1541986714/649451770-2433486197-7ABBD899E3FEF4A9FE53DDE0D5C77A99/0?term=3,subType=0]')
+    message = '[CQ:image,file=7abbd899e3fef4a9fe53dde0d5c77a99.image,url=https://gchat.qpic.cn/gchatpic_new/1541986714/649451770-2433486197-7ABBD899E3FEF4A9FE53DDE0D5C77A99/0?term=3,subType=0]'
+    y=re.search(r'url=(.*),subType', message).groups()[0]
+    print(z)
     print(y)

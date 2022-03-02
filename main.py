@@ -77,5 +77,12 @@ def parse_cqimgurl():
     message = flask.request.values.get('message')
     return json.dumps(Regular().getCQImageUrl(message), ensure_ascii=False)
 
+@api.route('/parse/cqimginfo', methods=['GET'])
+def parse_cqimginfo():
+    from ClassRegular import Regular
+    return json.dumps(Regular().getCQImageUrlInfo(), ensure_ascii=False)
+
+
+    
 if __name__ == '__main__':
     api.run(port=6702, debug=True, host='127.0.0.1')
