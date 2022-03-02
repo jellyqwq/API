@@ -71,6 +71,11 @@ def parse_bdynamci():
     message = flask.request.values.get('message')
     return json.dumps(Regular().biliDynamicId(message), ensure_ascii=False)
 
+@api.route('/parse/cqimgurl', methods=['GET'])
+def parse_cqimgurl():
+    from ClassRegular import Regular
+    message = flask.request.values.get('message')
+    return json.dumps(Regular().getCQImageUrl(message), ensure_ascii=False)
 
 if __name__ == '__main__':
     api.run(port=6702, debug=True, host='127.0.0.1')

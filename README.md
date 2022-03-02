@@ -35,4 +35,5 @@
     - [x] [/abcode?message=](/README.md) 从字符串中提取视频abcode
     - [x] [/b23?message=](/README.md) 从字符串中提取b23.tv的链接并返回其重定向地址
     - [x] [/bdynamic?message=](/README.md) 从消息>message<中匹配出动态id
+    - [x] [/cqimgurl?message=](/README.md) 从图片消息中提取图片url
 

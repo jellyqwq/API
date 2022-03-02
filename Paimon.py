@@ -6,8 +6,10 @@ import websockets
 import json
 import logging
 import requests
+import os
 
 logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
+os.makedirs('./CQImageUrl/', exist_ok=True)
 
 class Robot(object):
     def __init__(self, websocket, loop):
@@ -135,14 +137,24 @@ async def echo(websocket, path):
             if message['group_id'] in [980514385,649451770]: #980514385,649451770
                 gid = message['group_id']
                 # test code
-                try:
-                    logging.info(message['message'])
-                    logging.info(type(message['message']))
-                except:
-                    logging.info(message)
-                    logging.info(type(message))
-                    break
-                
+                # try:
+                #     logging.info(message['message'])
+                #     logging.info(type(message['message']))
+                # except:
+                #     logging.info(message)
+                #     logging.info(type(message))
+                #     break
+                if 'CQ:image' in message:
+                    r = requests.get('http://api.jellyqwq.com:6702/parse/cqimgurl?message={}'.format(message)).json()
+                    if r['status'] == 0:
+                        
+                        with open('./CQImageUrl/{}.txt'.format(time.strftime("%Y-%m-%d", time.localtime(time.time()))), 'a', encoding='utf-8') as f:
+                            f.write(r['data'])
+                            f.write('\n')
+                        break
+                    else:
+                        break
+
                 # atri pixiv model
                 if 'paipi' == message['message'][:5]:
                     try:
@@ -179,6 +191,13 @@ async def echo(websocket, path):
                         if '功能' in message['message']:
                             await robot.sendMessage('有什么感兴趣的功能吗?\n1.热搜d=====(￣▽￣*)b\n2.b站视链展示(。・∀・)ノ\n3.GitHub:https://github.com/jellyqwq/Paimon\n[CQ:image,file={}]'.format('https://i0.hdslb.com/bfs/article/1fbf0b10c5bf4fc324fbf7a53e42600982e9a382.gif'),gid)
                             break
+                        elif '图库' in message['message']:
+                            from itertools import (takewhile, repeat)
+                            buffer = 1024 * 1024
+                            t =time.strftime("%Y-%m-%d", time.localtime(time.time()))
+                            with open('CQImageUrl/{}.txt'.format(t), encoding='utf-8') as f:
+                                buf_gen = takewhile(lambda x: x, (f.read(buffer) for _ in repeat(None)))
+                                print(t, '保存图片', sum(buf.count('\n') for buf in buf_gen), '张')
                         elif '应急' in message['message'] or '食品' in message['message']:
                             await robot.sendMessage('欸,派蒙不是吃的\n[CQ:image,file={}]'.format('https://i0.hdslb.com/bfs/article/d0ce4f650c8a398fe5ff2e1a5705e59d24ba8091.jpg'), gid)
                             break
@@ -186,7 +205,7 @@ async def echo(websocket, path):
                             await robot.sendMessage('好耶开饭咯,我要吃甜甜花酿鸡\n[CQ:image,file={}]'.format('https://i0.hdslb.com/bfs/article/2d07fbb5269025d3690186164a50cd0f6b9127a6.gif'), gid)
                             break
                         elif '派蒙' == message['message']:
-                            await robot.sendMessage('你好!\n[CQ:image,file={}]'.format('https://i0.hdslb.com/bfs/article/1aee0e5e99ff1b17f68203f383b4b040c2f0f06c.gif'), gid)
+                            await robot.sendMessage('你好!', gid)
                             break
                         else:
                             await robot.sendMessage('前面的区域,以后再来探索吧', gid)

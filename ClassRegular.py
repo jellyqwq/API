@@ -63,8 +63,22 @@ class Regular(object):
                 'data': 'biliDynamic match failed(+_+)'
                 }
 
+    def getCQImageUrl(self, message):
+        try:
+            url = re.search(r'url=(.*),subType',message).groups()[0]
+            return {
+                'status': 0,
+                'data': url
+            }
+        except:
+            logging.error('CQ图url匹配失败')
+            return {
+                'status': -5,
+                'data': 'CQ图url匹配失败'
+            }
 
 if __name__ == '__main__':
-    patternBiliDynamicId = re.compile(r'(?:t|m).bilibili.com/(?:dynamic/)?([0-9]+)')
-    BiliDynamicId = re.findall(patternBiliDynamicId, 'https://m.bilibili.com/dynamic/627795919422504831?share_medium=android&share_plat=android&share_session_id=33a44759-0a5c-4fc1-95f5-de78f440c7b3&share_source=COPY&share_tag=s_i&timestamp=1645084342&unique_k=f4vzDAM')#[0]
-    print(BiliDynamicId)
+    x = '[CQ:image,file=7abbd899e3fef4a9fe53dde0d5c77a99.image,url=https://gchat.qpic.cn/gchatpic_new/1541986714/649451770-2433486197-7ABBD899E3FEF4A9FE53DDE0D5C77A99/0?term=3,subType=0]'
+    y=re.search(r'url=(.*),subType',x).groups()[0]
+    
+    print(y)
