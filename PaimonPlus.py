@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import asyncio
+import time
 import websockets
 import json
 import logging
@@ -75,8 +76,8 @@ class Robot(object):
     # b站的信息转发模块
     async def sendBiliMessage(self, message, gid):
         # 当动态域名在消息中
-        if 't.bilibili.com' in message['message']:
-            i = requests.get('http://api.jellyqwq.com:6702/parse/bdynamci?message={}'.format(message['message'])).json()
+        if 't.bilibili.com' in message:
+            i = requests.get('http://api.jellyqwq.com:6702/parse/bdynamci?message={}'.format(message)).json()
             if i['status'] == 0:
                 info = requests.get('http://api.jellyqwq.com:6702/bili/dynamicinfo?id={}'.format(i['data'])).json()
                 # 判断请求处理状态
@@ -92,6 +93,7 @@ class Robot(object):
                     if info['type'] in [2]:
                         for picture in data['imageList']:
                             await self.sendImage(picture, gid)
+                            time.sleep(1)
                 else:
                     await self.sendMessage(info['data'], gid)
             else:
@@ -99,15 +101,16 @@ class Robot(object):
 
         # https://www.bilibili.com/video/BV1db4y1e7B2
         # 当视频链接存在于b站域名下时
-        elif 'bilibili.com/video' in message['message']:
-            r = requests.get('http://api.jellyqwq.com:6702/parse/abcode?message={}'.format(message['message'])).json()
+        elif 'bilibili.com/video' in message:
+            r = requests.get('http://api.jellyqwq.com:6702/parse/abcode?message={}'.format(message)).json()
             if r['status'] == 0:
                 info = requests.get('http://api.jellyqwq.com:6702/bili/videoinfo?abcode={}'.format(r['data'])).json()
                 if info['status'] == 0:
                     data = info['data']
-                    await self.sendMessage('标题:{}\n作者:{}\n\n简介:{}'.format(data['title'], data['uname']), gid)
-                    await self.sendMessage('[CQ:image,file={}]\n播放量:{}\n传送门->{}'.format(data['face'], data['view'], data['shortLink']), gid)
-                    await self.sendMessage('评论:{} 弹幕:{}\n硬币:{} 收藏:{}\n点赞:{} 分享:{}'.format(data['reply'], data['danmaku'], data['coin'], data['favorite'], data['like'], data['share']))
+                    await self.sendMessage('标题:{}\n作者:{}\n\n简介:{}'.format(data['title'], data['uname'], data['desc']), gid)
+                    await self.sendMessage('评论:{} 弹幕:{}\n硬币:{} 收藏:{}\n点赞:{} 分享:{}'.format(data['reply'], data['danmaku'], data['coin'], data['favorite'], data['like'], data['share']), gid)
+                    await self.sendMessage('[CQ:image,file={}]\n播放量:{}\n传送门->{}'.format(data['face'], data['view'], data['shortLink']['data']), gid)
+                    
                 else:
                     await self.sendMessage(info['data'], gid)
             else:
@@ -117,7 +120,7 @@ class Robot(object):
         r = requests.get('http://api.jellyqwq.com:6702/parse/b23?message={}'.format(message)).json()
         if r['status'] == 0:
             if 'bilibili.com' in r['data']:
-                self.sendBiliMessage(r['data'], gid)
+                await self.sendBiliMessage(r['data'], gid)
             else:
                 await self.sendMessage(r['data'], gid)
         else:
@@ -142,9 +145,11 @@ async def echo(websocket, path):
                 # test code
                 try:
                     logging.info(message['message'])
+                    logging.info(type(message['message']))
                 except:
                     logging.info(message)
                     logging.info(type(message))
+                    break
                 
                 # atri pixiv model
                 if 'paipi' == message['message'][:5]:

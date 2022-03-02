@@ -19,7 +19,7 @@ class Weibo(object):
         HotWordLsit = [['Top', hotgov['word'], hotgov['icon_desc']]]
         realtime = data['realtime']
         num = 1
-        HotWordTime = time.strftime("%a %b %d %H:%M:%S %Y", time.localtime(time.time()))
+        HotWordTime = time.strftime("%Y-%m-%d %H:%M %a", time.localtime(time.time()))
         for hot_dict in realtime:
             if 'label_name' in hot_dict.keys():
                 HotWordLsit.append([str(num), hot_dict['word'], hot_dict['label_name']])

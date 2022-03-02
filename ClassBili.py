@@ -31,7 +31,7 @@ class Bili(object):
         if response['code'] == 0:
             logging.info('Get hot search success')
             timestamp = response['timestamp']
-            HotWordTime = time.strftime("Y-%m-%d %H:%M %a", time.localtime(timestamp))
+            HotWordTime = time.strftime("%Y-%m-%d %H:%M %a", time.localtime(timestamp))
             HotWordLsit =[]
             for li in response['list']:
                 if li['word_type'] == 5:
