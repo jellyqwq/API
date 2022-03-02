@@ -9,12 +9,6 @@ import requests
 
 logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
 
-# 自定义模块
-from ClassBili import Bili
-from ClassRegular import Regular
-from ClassFenCi import FenCi
-# from ClassWeiBo import Weibo
-
 class Robot(object):
     def __init__(self, websocket, loop):
         # self._groupId =  gid
@@ -131,9 +125,7 @@ class Robot(object):
 loop = asyncio.get_event_loop()
 
 async def echo(websocket, path):
-    pair = Regular()
     robot = Robot(websocket, loop)
-    paib = Bili()
     while websocket.open:
         message = await websocket.recv()
         # 将原始字符串json加载成字典形式
