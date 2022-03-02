@@ -72,6 +72,57 @@ class Robot(object):
         for m in message:
             await self.atri_sendImage(m, gid)
 
+    # b站的信息转发模块
+    async def sendBiliMessage(self, message, gid):
+        # 当动态域名在消息中
+        if 't.bilibili.com' in message['message']:
+            i = requests.get('http://api.jellyqwq.com:6702/parse/bdynamci?message={}'.format(message['message'])).json()
+            if i['status'] == 0:
+                info = requests.get('http://api.jellyqwq.com:6702/bili/dynamicinfo?id={}'.format(i['data'])).json()
+                # 判断请求处理状态
+                if info['status'] == 0:
+                    data = info['data']
+                    # 动态基本消息模板
+                    if info['type'] in [2,4]:
+                        # 发布时间,up名字
+                        await self.sendMessage('时间:{}\nUP:{}'.format(data['time'],data['uname']), gid)
+                        await self.sendMessage('内容:{}\n\n浏览:{} 转发:{}\n评论:{} 点赞{}'.format(data['content'], data['view'], data['repost'], data['comment'], data['like']), gid)
+                    
+                    # 2类型动态有图片列表,调用发图
+                    if info['type'] in [2]:
+                        for picture in data['imageList']:
+                            await self.sendImage(picture, gid)
+                else:
+                    await self.sendMessage(info['data'], gid)
+            else:
+                await self.sendMessage(i['data'], gid)
+
+        # https://www.bilibili.com/video/BV1db4y1e7B2
+        # 当视频链接存在于b站域名下时
+        elif 'bilibili.com/video' in message['message']:
+            r = requests.get('http://api.jellyqwq.com:6702/parse/abcode?message={}'.format(message['message'])).json()
+            if r['status'] == 0:
+                info = requests.get('http://api.jellyqwq.com:6702/bili/videoinfo?abcode={}'.format(r['data'])).json()
+                if info['status'] == 0:
+                    data = info['data']
+                    await self.sendMessage('标题:{}\n作者:{}\n\n简介:{}'.format(data['title'], data['uname']), gid)
+                    await self.sendMessage('[CQ:image,file={}]\n播放量:{}\n传送门->{}'.format(data['face'], data['view'], data['shortLink']), gid)
+                    await self.sendMessage('评论:{} 弹幕:{}\n硬币:{} 收藏:{}\n点赞:{} 分享:{}'.format(data['reply'], data['danmaku'], data['coin'], data['favorite'], data['like'], data['share']))
+                else:
+                    await self.sendMessage(info['data'], gid)
+            else:
+                await self.sendMessage(r['data'], gid)
+        
+    async def sendB23Message(self, message, gid):
+        r = requests.get('http://api.jellyqwq.com:6702/parse/b23?message={}'.format(message)).json()
+        if r['status'] == 0:
+            if 'bilibili.com' in r['data']:
+                self.sendBiliMessage(r['data'], gid)
+            else:
+                await self.sendMessage(r['data'], gid)
+        else:
+            await self.sendMessage(r['data'], gid)
+            
 
 
 loop = asyncio.get_event_loop()
@@ -93,8 +144,37 @@ async def echo(websocket, path):
                     logging.info(message['message'])
                 except:
                     logging.info(message)
+                    logging.info(type(message))
                 
+                # atri pixiv model
+                if 'paipi' == message['message'][:5]:
+                    try:
+                        search = message['message'][5:].split('#')
+                        name = search[0]
+                        num = int(search[1])
+                    except:
+                        await robot.sendMessage('解析失败', gid)
+                    else:
+                        if num <= 5:
+                            await robot.sendPicture(name, num, gid)
+                        else:
+                            await robot.sendMessage('图片过多', gid)
                 
+                if 'bilibili.com' in message['message']:
+                    await robot.sendBiliMessage(message['message'], gid)
+
+                if 'b23.tv' in message['message']:
+                    await robot.sendB23Message(message['message'], gid)
+
+                # b站热搜
+                if 'bhot' == message['message']:
+                    await robot.sendMessage('b站热搜来咯~（。＾▽＾）',gid)
+                    await robot.sendMessage(requests.get('http://api.jellyqwq.com:6702/bili/hotword').json()['data'],gid)
+                
+                # 微博热搜
+                if 'whot' == message['message']:
+                    await robot.sendMessage('微博热搜来咯~（。＾▽＾）',gid)
+                    await robot.sendMessage(requests.get('http://api.jellyqwq.com:6702/weibo/hotword').json()['data'],gid)
 
                 keyWords = ['Paimon', 'paimon', '派蒙']
                 for word in keyWords:
@@ -113,87 +193,7 @@ async def echo(websocket, path):
                             break
                         else:
                             await robot.sendMessage('前面的区域,以后再来探索吧', gid)
-                            break
-                
-                # atri pixiv model
-                if 'paipi' == message['message'][:5]:
-                    try:
-                        search = message['message'][5:].split('#')
-                        name = search[0]
-                        num = int(search[1])
-                    except:
-                        await robot.sendMessage('解析失败', gid)
-                    else:
-                        if num <= 5:
-                            await robot.sendPicture(name, num, gid)
-                        else:
-                            await robot.sendMessage('图片过多', gid)
-
-                # 域名过滤
-                if 'bilibili.com' in message['message']:
-                    if 't.bilibili.com' in message['message']:
-                        result = pair.biliDynamicId(message['message'])
-                        if result['status'] == 0:
-                            result = paib.getDynamicInfo(result['result'])
-                            await robot.sendMessage('{}\n{}'.format(result['uname'], result['description']), gid)
-                            for picture in result['imageList']:
-                                await robot.sendImage(picture, gid)
-                        elif result['status'] == -1:
-                            await robot.sendMessage(result['result'], gid)
-
-                    elif 'bilibili.com/video' in message['message']:
-                        result = pair.biliVideoUrl(message['message'])
-                        if result['status'] == 0:
-                            result = paib.biliVideoInfo(result['result'])
-                            if result['status'] == 0:
-                                await robot.sendMessage(result['result'], gid)
-                            else:
-                                await robot.sendMessage(result['status'], gid)
-                        elif result['status'] == -1:
-                            await robot.sendMessage(result['result'], gid)
-        
-
-                if 'b23.tv' in message['message']:
-                    # 从消息中取出url
-                    result = pair.biliShortUrl(message['message'])
-                    if result['status'] == 0:
-                        # 视频链接匹配
-                        if 'bilibili.com/video' in result['result']:
-                            result = pair.biliVideoUrl(result['result'])
-                            logging.info('p129')
-                            if result['status'] == 0:
-                                result = paib.biliVideoInfo(result['result'])
-                                logging.info(result)
-                                if result['status'] == 0:
-                                    await robot.sendMessage(result['result'], gid)
-                                else:
-                                    await robot.sendMessage(result['status'], gid)
-                            elif result['status'] == -1:
-                                await robot.sendMessage(result['result'], gid)
-
-                        # 动态链接匹配
-                        elif 'm.bilibili.com' in result['result']:
-                            result = pair.biliDynamicId(result['result'])
-                            if result['status'] == 0:
-                                result = paib.getDynamicInfo(result['result'])
-                                await robot.sendMessage('{}\n{}'.format(result['uname'], result['description']), gid)
-                                for picture in result['imageList']:
-                                    await robot.sendImage(picture, gid)
-                            elif result['status'] == -1:
-                                await robot.sendMessage(result['result'], gid)
-                    elif result['status'] == -1:
-                        await robot.sendMessage(result['result'], gid)
-
-                # b站热搜
-                if 'bhot' == message['message']:
-                    await robot.sendMessage('b站热搜来咯~（。＾▽＾）',gid)
-                    await robot.sendMessage(requests.get('http://api.jellyqwq.com:6702/bili/hotword').json()['data'],gid)
-                
-                # 微博热搜
-                if 'whot' == message['message']:
-                    await robot.sendMessage('微博热搜来咯~（。＾▽＾）',gid)
-                    await robot.sendMessage(requests.get('http://api.jellyqwq.com:6702/weibo/hotword').json()['data'],gid)
-                    
+                            break    
                     
 
 async def main():

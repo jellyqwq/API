@@ -31,6 +31,8 @@
 - [/weibo](/ClassWeiBo.md)
     - [x] [/hotword](/ClassWeiBo.md#gethotword) 获取微博热搜
 - [/parse](/README.md)
-    - [x] [/abcode?url=](/README.md) 将b站域名下的视频url提取av或bv号
-    - [x] [/b23?url=](/README.md) 将b23.tv域名下的重定向地址返回
+    <!-- - [x] [/geturl?message=](/README.md) 从消息中提取url -->
+    - [x] [/abcode?message=](/README.md) 从字符串中提取视频abcode
+    - [x] [/b23?message=](/README.md) 从字符串中提取b23.tv的链接并返回其重定向地址
+    - [x] [/bdynamic?message=](/README.md) 从消息>message<中匹配出动态id
 

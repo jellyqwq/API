@@ -56,15 +56,20 @@ def wbhotword():
 @api.route('/parse/abcode', methods=['GET'])
 def parse_abcode():
     from ClassRegular import Regular
-    url = flask.request.values.get('url')
-    return json.dumps(Regular().biliVideoUrl(url), ensure_ascii=False)
+    message = flask.request.values.get('message')
+    return json.dumps(Regular().biliVideoUrl(message), ensure_ascii=False)
 
 @api.route('/parse/b23', methods=['GET'])
 def parse_b23():
     from ClassRegular import Regular
-    url = flask.request.values.get('url')
-    return json.dumps(Regular().biliShortUrl(url), ensure_ascii=False)
+    message = flask.request.values.get('message')
+    return json.dumps(Regular().biliShortUrl(message), ensure_ascii=False)
 
+@api.route('/parse/bdynamci', methods=['GET'])
+def parse_bdynamci():
+    from ClassRegular import Regular
+    message = flask.request.values.get('message')
+    return json.dumps(Regular().biliDynamicId(message), ensure_ascii=False)
 
 
 if __name__ == '__main__':

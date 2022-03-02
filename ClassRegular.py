@@ -8,7 +8,8 @@ logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', level=loggin
 class Regular(object):
     def __init__(self):
         pass
-
+    
+    # 将b站域名下的视频url提取av或bv号
     def biliVideoUrl(self, message):
         try:
             patternBili = re.compile(r'video/([a-zA-Z0-9]+)')
@@ -25,6 +26,7 @@ class Regular(object):
                 'data': 'biliVideoUrl match failed(+_+)?'
                 }
 
+    # 将b23.tv域名下的重定向地址返回
     def biliShortUrl(self, message):
         try:
             patternBiliShortLink = re.compile(r'http(s)://b23.tv/[a-zA-Z0-9]+')
@@ -42,23 +44,24 @@ class Regular(object):
             logging.error('biliShortUrl match failed(+_+)?')
             return {
                 'status': -5,
-                'data': 'biliShortUrl match failed(+_+)?'
+                'data': response
                 }
-
+    
+    # 动态url地址
     def biliDynamicId(self, message):
-        '''
-        返回t.bilibili.com域名下的b站动态\n
-        status  result\n
-        0       正常\n
-        -1      匹配失败\n
-        '''
         try:
             patternBiliDynamicId = re.compile(r'(?:t|m).bilibili.com/(?:dynamic/)?([0-9]+)')
             BiliDynamicId = re.findall(patternBiliDynamicId, message)[0]
-            return {'status': 0,'result': BiliDynamicId}
+            return {
+                'status': 0,
+                'data': BiliDynamicId
+                }
         except:
             logging.error('biliDynamic match failed(+_+)?')
-            return {'status': -1,'result': 'biliDynamic match failed(+_+)'}
+            return {
+                'status': -5,
+                'data': 'biliDynamic match failed(+_+)'
+                }
 
 
 if __name__ == '__main__':

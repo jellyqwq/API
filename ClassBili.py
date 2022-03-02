@@ -99,6 +99,7 @@ class Bili(object):
                 }
         if response.json()['code'] == 0:
             data = response.json()['data']
+            uname = data['owner']['name']
             stat = data['stat']
             bvid = data['bvid']
             aid = stat['aid']
@@ -118,6 +119,7 @@ class Bili(object):
                 'data': {
                     'aid': aid,
                     'bvid': bvid,
+                    'uname': uname,
                     'face': face,
                     'title': title,
                     'desc': desc,
@@ -222,8 +224,8 @@ class Bili(object):
 if __name__ == '__main__':
     paib = Bili()
     # a = paib.getDynamicInfo('594877314370747257')##627795919422504831
-    a = paib.getDynamicInfo('627795919422504831')#631421997174226993#
-    # a = paib.biliVideoInfo('av706')
+    # a = paib.getDynamicInfo('627795919422504831')#631421997174226993#
+    a = paib.biliVideoInfo('av706')
     print(a)
 
 
