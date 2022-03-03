@@ -68,11 +68,26 @@ class Regular(object):
 
     def getCQImageUrl(self, message):
         try:
-            url = re.search(r'url=(.*),subType',message).groups()[0]
+            url = re.search(r'https://gchat.qpic.cn/gchatpic_new/(.*?/.*?)/0\?term=3',message).groups()[0]
             os.makedirs('./CQImageUrl/', exist_ok=True)
-            with open('./CQImageUrl/{}.txt'.format(time.strftime("%Y-%m", time.localtime(time.time()))), 'a', encoding='utf-8') as f:
-                f.write(url)
-                f.write('\n')
+            with open('./CQImageUrl/{}.txt'.format(time.strftime("%Y-%m", time.localtime(time.time()))), mode='a+', encoding='utf-8') as f:
+                f.seek(0)
+                if f.read() != '':
+                    f.seek(0)
+                    count = False
+                    for line in f:
+                        if url[-32:] == line[-33:-1] and count == False:
+                            logging.info('图片已存在')
+                            count = True
+                            break
+                    if count == False:
+                        f.seek(0,2)
+                        f.write(url)
+                        f.write('\n')
+                else:
+                    logging.info('h')
+                    f.write(url)
+                    f.write('\n')
             return {
                 'status': 0,
                 'data': '保存成功'
@@ -103,8 +118,10 @@ class Regular(object):
             }
 
 if __name__ == '__main__':
-    z = Regular().getCQImageUrl('[CQ:image,file=7abbd899e3fef4a9fe53dde0d5c77a99.image,url=https://gchat.qpic.cn/gchatpic_new/1541986714/649451770-2433486197-7ABBD899E3FEF4A9FE53DDE0D5C77A99/0?term=3,subType=0]')
-    message = '[CQ:image,file=7abbd899e3fef4a9fe53dde0d5c77a99.image,url=https://gchat.qpic.cn/gchatpic_new/1541986714/649451770-2433486197-7ABBD899E3FEF4A9FE53DDE0D5C77A99/0?term=3,subType=0]'
-    y=re.search(r'url=(.*),subType', message).groups()[0]
-    print(z)
-    print(y)
+    z = Regular().getCQImageUrl('[CQ:image,file=7abbd899e3fef4a9fe53dde0d5c77a99.image,url=https://gchat.qpic.cn/gchatpic_new/577430840/649451770-2677563889-688F4133E31AEFE4F6D9596057A89558/0?term=3,subType=0]')
+    # message = '[CQ:image,file=7abbd899e3fef4a9fe53dde0d5c77a99.image,url=https://gchat.qpic.cn/gchatpic_new/1541986714/649451770-2433486197-7ABBD899E3FEF4A9FE53DDE0D5C77A99/0?term=3,subType=0]'
+    # y=re.search(r'https://gchat.qpic.cn/gchatpic_new/(.*?/.*?)/0\?term=3', message).groups()[0]
+    # print(z)
+    # print(y)
+    # x = '1541986714/649451770-2433486197-7ABBD899E3FEF4A9FE53DDE0D5C77A99\n'
+    # print(x[-33:-1])
