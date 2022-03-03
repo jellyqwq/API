@@ -6,7 +6,6 @@ import websockets
 import json
 import logging
 import requests
-import os
 
 logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
 
@@ -120,8 +119,34 @@ class Robot(object):
                 await self.sendMessage(r['data'], gid)
         else:
             await self.sendMessage(r['data'], gid)
+    
+    async def sendPaimonMessage(self, message, gid):
+        if '功能' in message:
+            await self.sendMessage('有什么感兴趣的功能吗?\n1.热搜d=====(￣▽￣*)b\n2.b站视链展示(。・∀・)ノ\n3.GitHub:https://github.com/jellyqwq/Paimon\n[CQ:image,file={}]'.format('https://i0.hdslb.com/bfs/article/1fbf0b10c5bf4fc324fbf7a53e42600982e9a382.gif'),gid)
+        elif '查群' in message:
+            await self.sendMessage(requests.get('http://api.jellyqwq.com:6702/parse/getgroupinfo').json()['data'], gid)
+        elif '派蒙图库' in message:
+            # 派蒙图库#nmg
+            if '派蒙图库#' in message:
+                await self.sendMessage(requests.get('http://api.jellyqwq.com:6702/parse/cqimginfo?gid={}&groupname={}'.format(gid, message[5:])).json()['data'], gid)
+            elif '派蒙图库' == message:
+                await self.sendMessage(requests.get('http://api.jellyqwq.com:6702/parse/cqimginfo?gid={}'.format(gid)).json()['data'], gid)
             
-
+        # elif '图' in message:
+        #     # if '发张图'
+        #     await self.sendImage(requests.get('http://api.jellyqwq.com:6702/parse/getcqimage?gid={}'.format(gid)).json()['data'], gid)
+        #     break
+        elif '应急' in message or '食品' in message:
+            await self.sendMessage('欸,派蒙不是吃的\n[CQ:image,file={}]'.format('https://i0.hdslb.com/bfs/article/d0ce4f650c8a398fe5ff2e1a5705e59d24ba8091.jpg'), gid)
+        
+        elif '恰饭' in message or '吃饭' in message:
+            await self.sendMessage('好耶开饭咯,我要吃甜甜花酿鸡\n[CQ:image,file={}]'.format('https://i0.hdslb.com/bfs/article/2d07fbb5269025d3690186164a50cd0f6b9127a6.gif'), gid)
+            
+        elif '派蒙' == message:
+            await self.sendMessage('你好!', gid)
+            
+        else:
+            await self.sendMessage('前面的区域,以后再来探索吧', gid)
 
 loop = asyncio.get_event_loop()
 
@@ -138,8 +163,11 @@ async def echo(websocket, path):
                 # test code
                 try:
                     logging.info(message['message'])
+                except:
+                    logging.info(message)
+                else:
                     if 'CQ:image' in message['message']:
-                        requests.get('http://api.jellyqwq.com:6702/parse/cqimgurl?message={}gid={}'.format(message['message'], gid)).json()
+                        requests.get('http://api.jellyqwq.com:6702/parse/savecqimgurl?message={}&gid={}'.format(message['message'], gid)).json()
                     
                     # atri pixiv model
                     if 'paipi' == message['message'][:5]:
@@ -171,35 +199,9 @@ async def echo(websocket, path):
                         await robot.sendMessage('微博热搜来咯~（。＾▽＾）',gid)
                         await robot.sendMessage(requests.get('http://api.jellyqwq.com:6702/weibo/hotword').json()['data'],gid)
 
-                    keyWords = ['派蒙', 'paimon', 'Paimon']
-                    for word in keyWords:
-                        if word in message['message']:
-                            if '功能' in message['message']:
-                                await robot.sendMessage('有什么感兴趣的功能吗?\n1.热搜d=====(￣▽￣*)b\n2.b站视链展示(。・∀・)ノ\n3.GitHub:https://github.com/jellyqwq/Paimon\n[CQ:image,file={}]'.format('https://i0.hdslb.com/bfs/article/1fbf0b10c5bf4fc324fbf7a53e42600982e9a382.gif'),gid)
-                                break
-                            elif '查看群代号' in message['message']:
-                                await robot.sendMessage('', gid)
-                            elif '派蒙图库' in message['message']:
-                                await robot.sendMessage(requests.get('http://api.jellyqwq.com:6702/parse/cqimginfo').json()['data'], gid)
-                                break
-                            elif '图' in message['message']:
-                                # if '发张图'
-                                await robot.sendImage(requests.get('http://api.jellyqwq.com:6702/parse/getcqimage?gid={}'.format(gid)).json()['data'], gid)
-                                break
-                            elif '应急' in message['message'] or '食品' in message['message']:
-                                await robot.sendMessage('欸,派蒙不是吃的\n[CQ:image,file={}]'.format('https://i0.hdslb.com/bfs/article/d0ce4f650c8a398fe5ff2e1a5705e59d24ba8091.jpg'), gid)
-                                break
-                            elif '恰饭' in message['message'] or '吃饭' in message['message']:
-                                await robot.sendMessage('好耶开饭咯,我要吃甜甜花酿鸡\n[CQ:image,file={}]'.format('https://i0.hdslb.com/bfs/article/2d07fbb5269025d3690186164a50cd0f6b9127a6.gif'), gid)
-                                break
-                            elif '派蒙' == message['message']:
-                                await robot.sendMessage('你好!', gid)
-                                break
-                            else:
-                                await robot.sendMessage('前面的区域,以后再来探索吧', gid)
-                                break
-                except:
-                    logging.info(message)
+                    if '派蒙' in message['message']:
+                        await robot.sendPaimonMessage(message['message'], gid)     
+
 async def main():
     async with websockets.serve(echo, "127.0.0.1", 6701):
         await asyncio.Future()  # run forever

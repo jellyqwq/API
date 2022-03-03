@@ -87,7 +87,6 @@ class Regular(object):
                             f.write(url)
                             f.write('\n')
                     else:
-                        logging.info('h')
                         f.write(url)
                         f.write('\n')
                 return {
@@ -101,19 +100,45 @@ class Regular(object):
                 'data': 'CQ图url匹配失败'
             }
     
-    def getCQImageUrlInfo(self, gid):
-        try:
-            from itertools import (takewhile, repeat)
-            buffer = 1024 * 1024
-            t =time.strftime("%Y-%m", time.localtime(time.time()))
-            with open('./CQImageUrl/{}.txt'.format(t), encoding='utf-8') as f:
-                buf_gen = takewhile(lambda x: x, (f.read(buffer) for _ in repeat(None)))
-                message = t + '保存图片' + str(sum(buf.count('\n') for buf in buf_gen)) + '张'
-            return {
-                'status': 0,
-                'data': message
+    def getCQImageUrlInfo(self, gid=None, groupname=None):
+        from itertools import (takewhile, repeat)
+        buffer = 1024 * 1024
+        info_dict = {
+                'nmg': '649451770',
+                'qwq': '980514385'
             }
-        except:
+        if gid != None:
+            if groupname != None:
+                os.makedirs('./CQImageUrl/{}/'.format(info_dict[groupname]), exist_ok=True)
+                imgFolderList = os.listdir('./CQImageUrl/{}/'.format(info_dict[groupname]))
+                count = 0
+                for imgfoldername in imgFolderList:
+                    with open('./CQImageUrl/{}/{}'.format(info_dict[groupname], imgfoldername), encoding='utf-8') as f:
+                        buf_gen = takewhile(lambda x: x, (f.read(buffer) for _ in repeat(None)))
+                        count += sum(buf.count('\n') for buf in buf_gen)
+                message = '群聊{}收录图片:'.format(groupname) + str(count) + '张'
+                return {
+                    'status': 0,
+                    'data': message
+                }
+
+            else:
+                groupList = os.listdir('./CQImageUrl/')
+                count = 0
+                for i in groupList:
+                    imgFolderList = os.listdir('./CQImageUrl/{}/'.format(i))
+                    for imgfoldername in imgFolderList:
+                        with open('./CQImageUrl/{}/{}'.format(i, imgfoldername), encoding='utf-8') as f:
+                            buf_gen = takewhile(lambda x: x, (f.read(buffer) for _ in repeat(None)))
+                            count += sum(buf.count('\n') for buf in buf_gen)
+                count += sum(buf.count('\n') for buf in buf_gen)
+                message = '所有群收录图片:' + str(count) + '张'
+                return {
+                    'status': 0,
+                    'data': message
+                }
+
+        else:
             return {
                 'status': -5,
                 'data': '查询失败'
@@ -139,11 +164,33 @@ class Regular(object):
                     else:
                         num += 1
         
-        def getGroupInfo(self, gid):
-            gid = int(gid)
-            os.makedirs('./CQImageUrl/{}/'.format(gid), exist_ok=True)
-            groupList = os.listdir('./CQImageUrl/')
-            print(groupList)
+    def getGroupInfo(self):
+        os.makedirs('./CQImageUrl/', exist_ok=True)
+        groupList = os.listdir('./CQImageUrl/')
+        if groupList != []:
+            info_dict = {
+                '649451770': 'nmg',
+                '980514385': 'qwq'
+            }
+            m = '各群标识:\n'
+            for i in groupList:
+                if i in info_dict.keys():
+                    m += i
+                    m += ': '
+                    m += info_dict[i]
+                    m += '\n'
+                else:
+                    pass
+            return {
+                'status': 0,
+                'data': m
+            }
+        else:
+            return {
+                'status': -5,
+                'data': '没有群信息哦'
+            }
 
 if __name__ == '__main__':
-    print(Regular().getCQImageUrl('[CQ:image,file=56d9418fcc7b2fbffc65ceb8ec827c67.image,url=https://gchat.qpic.cn/gchatpic_new/577430840/649451770-3112217778-56D9418FCC7B2FBFFC65CEB8EC827C67/0?term=3,subType=0][CQ:image,file=0a60814073685e0a3e8bebad628e6cb4.image,url=https://gchat.qpic.cn/gchatpic_new/577430840/649451770-2610721719-0A60814073685E0A3E8BEBAD628E6CB4/0?term=3,subType=0][CQ:image,file=7c0fd5b390add504360ce3ce5d403bee.image,url=https://gchat.qpic.cn/gchatpic_new/577430840/649451770-2803613279-7C0FD5B390ADD504360CE3CE5D403BEE/0?term=3,subType=0][CQ:image,file=9de958418cdc1462940a51f1f6ebf8a4.image,url=https://gchat.qpic.cn/gchatpic_new/577430840/649451770-2315404786-9DE958418CDC1462940A51F1F6EBF8A4/0?term=3,subType=0]'))
+    # print(Regular().getCQImageUrl('[CQ:image,file=56d9418fcc7b2fbffc65ceb8ec827c67.image,url=https://gchat.qpic.cn/gchatpic_new/577430840/649451770-3112217778-56D9418FCC7B2FBFFC65CEB8EC827C67/0?term=3,subType=0][CQ:image,file=0a60814073685e0a3e8bebad628e6cb4.image,url=https://gchat.qpic.cn/gchatpic_new/577430840/649451770-2610721719-0A60814073685E0A3E8BEBAD628E6CB4/0?term=3,subType=0][CQ:image,file=7c0fd5b390add504360ce3ce5d403bee.image,url=https://gchat.qpic.cn/gchatpic_new/577430840/649451770-2803613279-7C0FD5B390ADD504360CE3CE5D403BEE/0?term=3,subType=0][CQ:image,file=9de958418cdc1462940a51f1f6ebf8a4.image,url=https://gchat.qpic.cn/gchatpic_new/577430840/649451770-2315404786-9DE958418CDC1462940A51F1F6EBF8A4/0?term=3,subType=0]'))
+    print(Regular().getGroupInfo())

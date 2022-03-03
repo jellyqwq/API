@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import re
 import flask
 import json
 
@@ -71,8 +72,8 @@ def parse_bdynamci():
     message = flask.request.values.get('message')
     return json.dumps(Regular().biliDynamicId(message), ensure_ascii=False)
 
-@api.route('/parse/cqimgurl', methods=['GET'])
-def parse_cqimgurl():
+@api.route('/parse/savecqimgurl', methods=['GET'])
+def parse_savecqimgurl():
     from ClassRegular import Regular
     message = flask.request.values.get('message')
     gid = flask.request.values.get('gid')
@@ -81,13 +82,23 @@ def parse_cqimgurl():
 @api.route('/parse/cqimginfo', methods=['GET'])
 def parse_cqimginfo():
     from ClassRegular import Regular
-    return json.dumps(Regular().getCQImageUrlInfo(), ensure_ascii=False)
-
-@api.route('/parse/getcqimage', methods=['GET'])
-def parse_getcqimage():
-    from ClassRegular import Regular
+    groupname = flask.request.values.get('groupname')
     gid = flask.request.values.get('gid')
-    return json.dumps(Regular().getCQImage(gid=gid), ensure_ascii=False)
+    if groupname:
+        return json.dumps(Regular().getCQImageUrlInfo(gid, groupname), ensure_ascii=False)
+    else:
+        return json.dumps(Regular().getCQImageUrlInfo(gid), ensure_ascii=False)
+
+# @api.route('/parse/getcqimage', methods=['GET'])
+# def parse_getcqimage():
+#     from ClassRegular import Regular
+#     gid = flask.request.values.get('gid')
+#     return json.dumps(Regular().getCQImage(gid=gid), ensure_ascii=False)
     
+@api.route('/parse/getgroupinfo', methods=['GET'])
+def parse_getgroupinfo():
+    from ClassRegular import Regular
+    return json.dumps(Regular().getGroupInfo(), ensure_ascii=False)
+
 if __name__ == '__main__':
     api.run(port=6702, debug=True, host='127.0.0.1')
