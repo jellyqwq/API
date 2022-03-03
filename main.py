@@ -82,7 +82,10 @@ def parse_cqimginfo():
     from ClassRegular import Regular
     return json.dumps(Regular().getCQImageUrlInfo(), ensure_ascii=False)
 
-
+@api.route('/parse/getcqimage', methods=['GET'])
+def parse_getcqimage():
+    from ClassRegular import Regular
+    return json.dumps(Regular().getCQImage(), ensure_ascii=False)
     
 if __name__ == '__main__':
     api.run(port=6702, debug=True, host='127.0.0.1')

@@ -5,6 +5,7 @@ import logging
 import requests
 import os
 import time
+import random
 
 logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
 
@@ -116,12 +117,26 @@ class Regular(object):
                 'status': -5,
                 'data': '查询失败'
             }
+    
+    def getCQImage(self, times=None, num=None):
+        CQImageList = os.listdir('./CQImageUrl/')
+        if times == None and num == None:
+            from itertools import (takewhile, repeat)
+            buffer = 1024 * 1024
+            r = random.randint(0,len(CQImageList)-1)
+            with open('./CQImageUrl/{}'.format(CQImageList[r]), 'r', encoding='utf-8') as f:
+                buf_gen = takewhile(lambda x: x, (f.read(buffer) for _ in repeat(None)))
+                x = random.randint(0,sum(buf.count('\n') for buf in buf_gen)-1)
+                num = 0
+                f.seek(0)
+                for line in f:
+                    if num == x:
+                        return {
+                            'status': 0,
+                            'data': 'https://gchat.qpic.cn/gchatpic_new/'+line.strip('\n')+'/0?term=3'
+                        }
+                    else:
+                        num += 1
 
 if __name__ == '__main__':
-    z = Regular().getCQImageUrl('[CQ:image,file=7abbd899e3fef4a9fe53dde0d5c77a99.image,url=https://gchat.qpic.cn/gchatpic_new/577430840/649451770-2677563889-688F4133E31AEFE4F6D9596057A89558/0?term=3,subType=0]')
-    # message = '[CQ:image,file=7abbd899e3fef4a9fe53dde0d5c77a99.image,url=https://gchat.qpic.cn/gchatpic_new/1541986714/649451770-2433486197-7ABBD899E3FEF4A9FE53DDE0D5C77A99/0?term=3,subType=0]'
-    # y=re.search(r'https://gchat.qpic.cn/gchatpic_new/(.*?/.*?)/0\?term=3', message).groups()[0]
-    # print(z)
-    # print(y)
-    # x = '1541986714/649451770-2433486197-7ABBD899E3FEF4A9FE53DDE0D5C77A99\n'
-    # print(x[-33:-1])
+    print(Regular().getCQImage())

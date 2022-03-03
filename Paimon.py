@@ -182,8 +182,12 @@ async def echo(websocket, path):
                         if '功能' in message['message']:
                             await robot.sendMessage('有什么感兴趣的功能吗?\n1.热搜d=====(￣▽￣*)b\n2.b站视链展示(。・∀・)ノ\n3.GitHub:https://github.com/jellyqwq/Paimon\n[CQ:image,file={}]'.format('https://i0.hdslb.com/bfs/article/1fbf0b10c5bf4fc324fbf7a53e42600982e9a382.gif'),gid)
                             break
-                        elif '图库' in message['message']:
+                        elif '派蒙图库' in message['message']:
                             await robot.sendMessage(requests.get('http://api.jellyqwq.com:6702/parse/cqimginfo').json()['data'], gid)
+                            break
+                        elif '图' in message['message']:
+                            await robot.sendImage(requests.get('http://api.jellyqwq.com:6702/parse/getcqimage').json()['data'], gid)
+                            break
                         elif '应急' in message['message'] or '食品' in message['message']:
                             await robot.sendMessage('欸,派蒙不是吃的\n[CQ:image,file={}]'.format('https://i0.hdslb.com/bfs/article/d0ce4f650c8a398fe5ff2e1a5705e59d24ba8091.jpg'), gid)
                             break
