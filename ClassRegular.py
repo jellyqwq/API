@@ -67,32 +67,33 @@ class Regular(object):
                 'data': 'biliDynamic match failed(+_+)'
                 }
 
-    def getCQImageUrl(self, message):
+    def saveCQImageUrl(self, message, gid):
         try:
-            url = re.search(r'https://gchat.qpic.cn/gchatpic_new/(.*?/.*?)/0\?term=3',message).groups()[0]
-            os.makedirs('./CQImageUrl/', exist_ok=True)
-            with open('./CQImageUrl/{}.txt'.format(time.strftime("%Y-%m", time.localtime(time.time()))), mode='a+', encoding='utf-8') as f:
-                f.seek(0)
-                if f.read(1) != '':
+            urlList = re.findall(r'https://gchat.qpic.cn/gchatpic_new/(.*?/.*?)/0\?term=3',message)
+            os.makedirs('./CQImageUrl/{}/'.format(gid), exist_ok=True)
+            with open('./CQImageUrl/{}/{}.txt'.format(gid, time.strftime("%Y-%m", time.localtime(time.time()))), mode='a+', encoding='utf-8') as f:
+                for url in urlList:
                     f.seek(0)
-                    count = False
-                    for line in f:
-                        if url[-32:] == line[-33:-1] and count == False:
-                            logging.info('图片已存在')
-                            count = True
-                            break
-                    if count == False:
-                        f.seek(0,2)
+                    if f.read(1) != '':
+                        f.seek(0)
+                        count = False
+                        for line in f:
+                            if url[-32:] == line[-33:-1] and count == False:
+                                logging.info('图片已存在')
+                                count = True
+                                break
+                        if count == False:
+                            f.seek(0,2)
+                            f.write(url)
+                            f.write('\n')
+                    else:
+                        logging.info('h')
                         f.write(url)
                         f.write('\n')
-                else:
-                    logging.info('h')
-                    f.write(url)
-                    f.write('\n')
-            return {
-                'status': 0,
-                'data': '保存成功'
-            }
+                return {
+                    'status': 0,
+                    'data': '保存成功'
+                }
         except:
             logging.error('CQ图url匹配失败')
             return {
@@ -100,7 +101,7 @@ class Regular(object):
                 'data': 'CQ图url匹配失败'
             }
     
-    def getCQImageUrlInfo(self):
+    def getCQImageUrlInfo(self, gid):
         try:
             from itertools import (takewhile, repeat)
             buffer = 1024 * 1024
@@ -118,8 +119,8 @@ class Regular(object):
                 'data': '查询失败'
             }
     
-    def getCQImage(self, times=None, num=None):
-        CQImageList = os.listdir('./CQImageUrl/')
+    def getCQImage(self, gid=None, times=None, num=None):
+        CQImageList = os.listdir('./CQImageUrl/{}/'.format(gid))
         if times == None and num == None:
             from itertools import (takewhile, repeat)
             buffer = 1024 * 1024
@@ -137,6 +138,12 @@ class Regular(object):
                         }
                     else:
                         num += 1
+        
+        def getGroupInfo(self, gid):
+            gid = int(gid)
+            os.makedirs('./CQImageUrl/{}/'.format(gid), exist_ok=True)
+            groupList = os.listdir('./CQImageUrl/')
+            print(groupList)
 
 if __name__ == '__main__':
-    print(Regular().getCQImage())
+    print(Regular().getCQImageUrl('[CQ:image,file=56d9418fcc7b2fbffc65ceb8ec827c67.image,url=https://gchat.qpic.cn/gchatpic_new/577430840/649451770-3112217778-56D9418FCC7B2FBFFC65CEB8EC827C67/0?term=3,subType=0][CQ:image,file=0a60814073685e0a3e8bebad628e6cb4.image,url=https://gchat.qpic.cn/gchatpic_new/577430840/649451770-2610721719-0A60814073685E0A3E8BEBAD628E6CB4/0?term=3,subType=0][CQ:image,file=7c0fd5b390add504360ce3ce5d403bee.image,url=https://gchat.qpic.cn/gchatpic_new/577430840/649451770-2803613279-7C0FD5B390ADD504360CE3CE5D403BEE/0?term=3,subType=0][CQ:image,file=9de958418cdc1462940a51f1f6ebf8a4.image,url=https://gchat.qpic.cn/gchatpic_new/577430840/649451770-2315404786-9DE958418CDC1462940A51F1F6EBF8A4/0?term=3,subType=0]'))
