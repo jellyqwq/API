@@ -72,7 +72,7 @@ class Regular(object):
             os.makedirs('./CQImageUrl/', exist_ok=True)
             with open('./CQImageUrl/{}.txt'.format(time.strftime("%Y-%m", time.localtime(time.time()))), mode='a+', encoding='utf-8') as f:
                 f.seek(0)
-                if f.read() != '':
+                if f.read(1) != '':
                     f.seek(0)
                     count = False
                     for line in f:
