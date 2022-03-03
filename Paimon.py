@@ -131,11 +131,8 @@ class Robot(object):
                 await self.sendMessage(requests.get('http://api.jellyqwq.com:6702/parse/cqimginfo?gid={}&groupname={}'.format(gid, message[5:])).json()['data'], gid)
             elif '派蒙图库' == message:
                 await self.sendMessage(requests.get('http://api.jellyqwq.com:6702/parse/cqimginfo?gid={}'.format(gid)).json()['data'], gid)
-            
-        # elif '图' in message:
-        #     # if '发张图'
-        #     await self.sendImage(requests.get('http://api.jellyqwq.com:6702/parse/getcqimage?gid={}'.format(gid)).json()['data'], gid)
-        #     break
+        elif '图' in message:
+            await self.sendImage(requests.get('http://api.jellyqwq.com:6702/parse/getcqimage?gid={}'.format(gid)).json()['data'], gid)
         elif '应急' in message or '食品' in message:
             await self.sendMessage('欸,派蒙不是吃的\n[CQ:image,file={}]'.format('https://i0.hdslb.com/bfs/article/d0ce4f650c8a398fe5ff2e1a5705e59d24ba8091.jpg'), gid)
         

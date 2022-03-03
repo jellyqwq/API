@@ -150,7 +150,7 @@ class Regular(object):
             from itertools import (takewhile, repeat)
             buffer = 1024 * 1024
             r = random.randint(0,len(CQImageList)-1)
-            with open('./CQImageUrl/{}'.format(CQImageList[r]), 'r', encoding='utf-8') as f:
+            with open('./CQImageUrl/{}/{}'.format(gid, CQImageList[r]), 'r', encoding='utf-8') as f:
                 buf_gen = takewhile(lambda x: x, (f.read(buffer) for _ in repeat(None)))
                 x = random.randint(0,sum(buf.count('\n') for buf in buf_gen)-1)
                 num = 0
