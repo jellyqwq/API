@@ -93,7 +93,8 @@ def parse_cqimginfo():
 def parse_getcqimage():
     from ClassRegular import Regular
     gid = flask.request.values.get('gid')
-    return json.dumps(Regular().getCQImage(gid=gid), ensure_ascii=False)
+    num = flask.request.values.get('num')
+    return json.dumps(Regular().getCQImage(gid, num), ensure_ascii=False)
     
 @api.route('/parse/getgroupinfo', methods=['GET'])
 def parse_getgroupinfo():

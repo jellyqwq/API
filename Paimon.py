@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 
 import asyncio
+from calendar import c
 import time
 import websockets
 import json
 import logging
 import requests
+import re
 
 logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
 
 class Robot(object):
     def __init__(self, websocket, loop):
-        # self._groupId =  gid
         self.websockets = websocket
         self.loop = loop
 
@@ -132,16 +133,58 @@ class Robot(object):
             elif '派蒙图库' == message:
                 await self.sendMessage(requests.get('http://api.jellyqwq.com:6702/parse/cqimginfo?gid={}'.format(gid)).json()['data'], gid)
         elif '图' in message:
-            await self.sendImage(requests.get('http://api.jellyqwq.com:6702/parse/getcqimage?gid={}'.format(gid)).json()['data'], gid)
+            info_dict = {
+                'nmg': '649451770',
+                'qwq': '980514385'
+                }
+            dict_replace = {
+                '一': '1',
+                '俩': '2',
+                '两': '2',
+                '几': '3',
+                '三': '3',
+                '四': '4',
+                '五': '5',
+                '六': '6',
+                '七': '7',
+                '八': '8',
+                '九': '9',
+                '十': '10'
+            }
+            for i in dict_replace.keys():
+                if i in message:
+                    message = message.replace(i, dict_replace[i])
+            num = re.findall(r'([0-9]+)张', message)
+            if num != []:
+                num = num[0]
+                if int(num) <= 10:
+                    num = str(num)
+                else:
+                    num = '1'
+            else:
+                num = '1'
+            
+            lock = False
+            for n in ['nmg', 'qwq']:
+                if n in message:
+                    searchgid = info_dict[n]
+                    lock = True
+                    break
+                else:
+                    pass
+            if lock == True:
+                searchgid = info_dict[n]
+            else:
+                searchgid = gid
+            imageList = requests.get('http://api.jellyqwq.com:6702/parse/getcqimage?gid={}&num={}'.format(searchgid, num)).json()['data']
+            for image in imageList:
+                await self.sendImage(image, gid)
         elif '应急' in message or '食品' in message:
             await self.sendMessage('欸,派蒙不是吃的\n[CQ:image,file={}]'.format('https://i0.hdslb.com/bfs/article/d0ce4f650c8a398fe5ff2e1a5705e59d24ba8091.jpg'), gid)
-        
         elif '恰饭' in message or '吃饭' in message:
-            await self.sendMessage('好耶开饭咯,我要吃甜甜花酿鸡\n[CQ:image,file={}]'.format('https://i0.hdslb.com/bfs/article/2d07fbb5269025d3690186164a50cd0f6b9127a6.gif'), gid)
-            
+            await self.sendMessage('好耶开饭咯,我要吃甜甜花酿鸡\n[CQ:image,file={}]'.format('https://i0.hdslb.com/bfs/article/2d07fbb5269025d3690186164a50cd0f6b9127a6.gif'), gid) 
         elif '派蒙' == message:
             await self.sendMessage('你好!', gid)
-            
         else:
             await self.sendMessage('前面的区域,以后再来探索吧', gid)
 
@@ -154,18 +197,19 @@ async def echo(websocket, path):
         # 将原始字符串json加载成字典形式
         message = json.loads(message)
         if 'group_id' in message.keys():
-            # 过滤群组 不过滤就直接not in
-            if message['group_id'] in [980514385,649451770]: #980514385,649451770
+            # 存图的
+            if message['group_id']:
                 gid = message['group_id']
-                # test code
+                if 'CQ:image' in message['message']:
+                    requests.get('http://api.jellyqwq.com:6702/parse/savecqimgurl?message={}&gid={}'.format(message['message'], gid)).json()
+            
+            if message['group_id'] in [980514385,649451770]:
+                gid = message['group_id']
                 try:
                     logging.info(message['message'])
                 except:
                     logging.info(message)
-                else:
-                    if 'CQ:image' in message['message']:
-                        requests.get('http://api.jellyqwq.com:6702/parse/savecqimgurl?message={}&gid={}'.format(message['message'], gid)).json()
-                    
+                else:  
                     # atri pixiv model
                     if 'paipi' == message['message'][:5]:
                         try:

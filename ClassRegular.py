@@ -144,11 +144,12 @@ class Regular(object):
                 'data': '查询失败'
             }
     
-    def getCQImage(self, gid=None, times=None, num=None):
+    def getCQImage(self, gid, imgnum):
         CQImageList = os.listdir('./CQImageUrl/{}/'.format(gid))
-        if times == None and num == None:
-            from itertools import (takewhile, repeat)
-            buffer = 1024 * 1024
+        from itertools import (takewhile, repeat)
+        buffer = 1024 * 1024
+        imgList = []
+        for i in range(0,int(imgnum)):
             r = random.randint(0,len(CQImageList)-1)
             with open('./CQImageUrl/{}/{}'.format(gid, CQImageList[r]), 'r', encoding='utf-8') as f:
                 buf_gen = takewhile(lambda x: x, (f.read(buffer) for _ in repeat(None)))
@@ -157,12 +158,14 @@ class Regular(object):
                 f.seek(0)
                 for line in f:
                     if num == x:
-                        return {
-                            'status': 0,
-                            'data': 'https://gchat.qpic.cn/gchatpic_new/'+line.strip('\n')+'/0?term=3'
-                        }
+                        imgList.append('https://gchat.qpic.cn/gchatpic_new/'+line.strip('\n')+'/0?term=3')
+                        break
                     else:
                         num += 1
+        return {
+                'status': 0,
+                'data': imgList
+            }
         
     def getGroupInfo(self):
         os.makedirs('./CQImageUrl/', exist_ok=True)
@@ -192,5 +195,5 @@ class Regular(object):
             }
 
 if __name__ == '__main__':
-    # print(Regular().getCQImageUrl('[CQ:image,file=56d9418fcc7b2fbffc65ceb8ec827c67.image,url=https://gchat.qpic.cn/gchatpic_new/577430840/649451770-3112217778-56D9418FCC7B2FBFFC65CEB8EC827C67/0?term=3,subType=0][CQ:image,file=0a60814073685e0a3e8bebad628e6cb4.image,url=https://gchat.qpic.cn/gchatpic_new/577430840/649451770-2610721719-0A60814073685E0A3E8BEBAD628E6CB4/0?term=3,subType=0][CQ:image,file=7c0fd5b390add504360ce3ce5d403bee.image,url=https://gchat.qpic.cn/gchatpic_new/577430840/649451770-2803613279-7C0FD5B390ADD504360CE3CE5D403BEE/0?term=3,subType=0][CQ:image,file=9de958418cdc1462940a51f1f6ebf8a4.image,url=https://gchat.qpic.cn/gchatpic_new/577430840/649451770-2315404786-9DE958418CDC1462940A51F1F6EBF8A4/0?term=3,subType=0]'))
-    print(Regular().getGroupInfo())
+    pass
+    # print(Regular().getCQImage('649451770', '10'))
