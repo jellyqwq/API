@@ -11,7 +11,18 @@ logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', level=loggin
 
 class Regular(object):
     def __init__(self):
-        pass
+        self.GNAME_TO_GID = {
+            'nmg': '649451770',
+            'qwq': '980514385',
+            'ys': '130516740',
+            'gal': '605650659',
+            }
+        self.GID_TO_GNAME = {
+            '649451770': 'nmg',
+            '980514385': 'qwq',
+            '130516740': 'ys',
+            '605650659': 'gal',
+        }
     
     # 将b站域名下的视频url提取av或bv号
     def biliVideoUrl(self, message):
@@ -103,23 +114,19 @@ class Regular(object):
     def getCQImageUrlInfo(self, gid=None, groupname=None):
         from itertools import (takewhile, repeat)
         buffer = 1024 * 1024
-        info_dict = {
-                'nmg': '649451770',
-                'qwq': '980514385',
-                'ys': '130516740'
-            }
         if gid != None:
             if groupname != None:
-                os.makedirs('./CQImageUrl/{}/'.format(info_dict[groupname]), exist_ok=True)
-                imgFolderList = os.listdir('./CQImageUrl/{}/'.format(info_dict[groupname]))
+                os.makedirs('./CQImageUrl/{}/'.format(self.GNAME_TO_GID[groupname]), exist_ok=True)
+                imgFolderList = os.listdir('./CQImageUrl/{}/'.format(self.GNAME_TO_GID[groupname]))
                 count = 0
                 for imgfoldername in imgFolderList:
-                    with open('./CQImageUrl/{}/{}'.format(info_dict[groupname], imgfoldername), encoding='utf-8') as f:
+                    with open('./CQImageUrl/{}/{}'.format(self.GNAME_TO_GID[groupname], imgfoldername), encoding='utf-8') as f:
                         buf_gen = takewhile(lambda x: x, (f.read(buffer) for _ in repeat(None)))
                         count += sum(buf.count('\n') for buf in buf_gen)
                 message = '群聊{}收录图片:'.format(groupname) + str(count) + '张'
                 return {
                     'status': 0,
+                    'count': count,
                     'data': message
                 }
 
@@ -150,7 +157,8 @@ class Regular(object):
         from itertools import (takewhile, repeat)
         buffer = 1024 * 1024
         imgList = []
-        for i in range(0,int(imgnum)):
+        count = self.getCQImageUrlInfo(gid, self.GID_TO_GNAME[gid])['count']
+        while len(imgList) != int(imgnum) and count >= int(imgnum):
             r = random.randint(0,len(CQImageList)-1)
             with open('./CQImageUrl/{}/{}'.format(gid, CQImageList[r]), 'r', encoding='utf-8') as f:
                 buf_gen = takewhile(lambda x: x, (f.read(buffer) for _ in repeat(None)))
@@ -159,8 +167,12 @@ class Regular(object):
                 f.seek(0)
                 for line in f:
                     if num == x:
-                        imgList.append('https://gchat.qpic.cn/gchatpic_new/'+line.strip('\n')+'/0?term=3')
-                        break
+                        img = 'https://gchat.qpic.cn/gchatpic_new/'+line.strip('\n')+'/0?term=3'
+                        if img not in imgList:
+                            imgList.append(img)
+                            break
+                        else:
+                            break
                     else:
                         num += 1
         return {
@@ -172,17 +184,12 @@ class Regular(object):
         os.makedirs('./CQImageUrl/', exist_ok=True)
         groupList = os.listdir('./CQImageUrl/')
         if groupList != []:
-            info_dict = {
-                '649451770': 'nmg',
-                '980514385': 'qwq',
-                '130516740': 'ys'
-            }
             m = '各群标识:\n'
             for i in groupList:
-                if i in info_dict.keys():
+                if i in self.GID_TO_GNAME.keys():
                     m += i
                     m += ': '
-                    m += info_dict[i]
+                    m += self.GID_TO_GNAME[i]
                     m += '\n'
                 else:
                     pass

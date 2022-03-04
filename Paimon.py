@@ -136,7 +136,8 @@ class Robot(object):
             info_dict = {
                 'nmg': '649451770',
                 'qwq': '980514385',
-                'ys': '130516740'
+                'ys': '130516740',
+                'gal': '605650659',
                 }
             dict_replace = {
                 '一': '1',
@@ -166,7 +167,7 @@ class Robot(object):
                 num = '1'
             
             lock = False
-            for n in ['nmg', 'qwq', 'ys']:
+            for n in ['nmg', 'qwq', 'ys', 'gal']:
                 if n in message:
                     searchgid = info_dict[n]
                     lock = True
