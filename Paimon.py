@@ -15,6 +15,12 @@ class Robot(object):
     def __init__(self, websocket, loop):
         self.websockets = websocket
         self.loop = loop
+        self.GNAME_TO_GID = {
+                'nmg': '649451770',
+                'qwq': '980514385',
+                'ys': '130516740',
+                'gal': '605650659',
+                }
 
     # 发送消息
     async def sendMessage(self, m, group_id):
@@ -133,12 +139,7 @@ class Robot(object):
             elif '派蒙图库' == message:
                 await self.sendMessage(requests.get('http://api.jellyqwq.com:6702/parse/cqimginfo?gid={}'.format(gid)).json()['data'], gid)
         elif '图' in message:
-            info_dict = {
-                'nmg': '649451770',
-                'qwq': '980514385',
-                'ys': '130516740',
-                'gal': '605650659',
-                }
+            
             dict_replace = {
                 '一': '1',
                 '俩': '2',
@@ -167,20 +168,23 @@ class Robot(object):
                 num = '1'
             
             lock = False
-            for n in ['nmg', 'qwq', 'ys', 'gal']:
+            for n in self.GNAME_TO_GID.keys():
                 if n in message:
-                    searchgid = info_dict[n]
+                    searchgid = self.GNAME_TO_GID[n]
                     lock = True
                     break
                 else:
                     pass
             if lock == True:
-                searchgid = info_dict[n]
+                searchgid = self.GNAME_TO_GID[n]
             else:
                 searchgid = gid
-            imageList = requests.get('http://api.jellyqwq.com:6702/parse/getcqimage?gid={}&num={}'.format(searchgid, num)).json()['data']
-            for image in imageList:
-                await self.sendImage(image, gid)
+            r = requests.get('http://api.jellyqwq.com:6702/parse/getcqimage?gid={}&num={}'.format(searchgid, num)).json()
+            if r['status'] == 0:
+                for image in r['data']:
+                    await self.sendImage(image, gid)
+            else:
+                await self.sendMessage(r['data'], gid)
         elif '应急' in message or '食品' in message:
             await self.sendMessage('欸,派蒙不是吃的\n[CQ:image,file={}]'.format('https://i0.hdslb.com/bfs/article/d0ce4f650c8a398fe5ff2e1a5705e59d24ba8091.jpg'), gid)
         elif '恰饭' in message or '吃饭' in message:

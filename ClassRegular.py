@@ -158,6 +158,11 @@ class Regular(object):
         buffer = 1024 * 1024
         imgList = []
         count = self.getCQImageUrlInfo(gid, self.GID_TO_GNAME[gid])['count']
+        if count < int(imgnum):
+            return {
+                'status': -5,
+                'data': '群{}图库数量不足'.format(self.GID_TO_GNAME[gid])
+            }
         while len(imgList) != int(imgnum) and count >= int(imgnum):
             r = random.randint(0,len(CQImageList)-1)
             with open('./CQImageUrl/{}/{}'.format(gid, CQImageList[r]), 'r', encoding='utf-8') as f:
