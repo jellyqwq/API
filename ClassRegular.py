@@ -105,7 +105,8 @@ class Regular(object):
         buffer = 1024 * 1024
         info_dict = {
                 'nmg': '649451770',
-                'qwq': '980514385'
+                'qwq': '980514385',
+                'ys': '130516740'
             }
         if gid != None:
             if groupname != None:
@@ -173,7 +174,8 @@ class Regular(object):
         if groupList != []:
             info_dict = {
                 '649451770': 'nmg',
-                '980514385': 'qwq'
+                '980514385': 'qwq',
+                '130516740': 'ys'
             }
             m = '各群标识:\n'
             for i in groupList:
@@ -196,4 +198,4 @@ class Regular(object):
 
 if __name__ == '__main__':
     pass
-    # print(Regular().getCQImage('649451770', '10'))
+    print(Regular().getCQImage('649451770', '10'))

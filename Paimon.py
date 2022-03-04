@@ -135,7 +135,8 @@ class Robot(object):
         elif '图' in message:
             info_dict = {
                 'nmg': '649451770',
-                'qwq': '980514385'
+                'qwq': '980514385',
+                'ys': '130516740'
                 }
             dict_replace = {
                 '一': '1',
@@ -165,7 +166,7 @@ class Robot(object):
                 num = '1'
             
             lock = False
-            for n in ['nmg', 'qwq']:
+            for n in ['nmg', 'qwq', 'ys']:
                 if n in message:
                     searchgid = info_dict[n]
                     lock = True
@@ -197,11 +198,13 @@ async def echo(websocket, path):
         # 将原始字符串json加载成字典形式
         message = json.loads(message)
         if 'group_id' in message.keys():
-            # 存图的
-            if message['group_id']:
-                gid = message['group_id']
+            try:
+                if message['group_id']:
+                    gid = message['group_id']
                 if 'CQ:image' in message['message']:
                     requests.get('http://api.jellyqwq.com:6702/parse/savecqimgurl?message={}&gid={}'.format(message['message'], gid)).json()
+            except:
+                pass
             
             if message['group_id'] in [980514385,649451770]:
                 gid = message['group_id']
