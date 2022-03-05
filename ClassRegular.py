@@ -6,6 +6,7 @@ import requests
 import os
 import time
 import random
+import collections
 
 logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
 
@@ -23,6 +24,7 @@ class Regular(object):
             '130516740': 'ys',
             '605650659': 'gal',
         }
+        self.IMAGE_CACHE_DICT = collections.OrderedDict()
     
     # 将b站域名下的视频url提取av或bv号
     def biliVideoUrl(self, message):
@@ -127,7 +129,7 @@ class Regular(object):
                 return {
                     'status': 0,
                     'count': count,
-                    'data': message
+                    'data': message,
                 }
 
             else:
@@ -143,7 +145,8 @@ class Regular(object):
                 message = '所有群收录图片:' + str(count) + '张'
                 return {
                     'status': 0,
-                    'data': message
+                    'count': count,
+                    'data': message,
                 }
 
         else:
@@ -170,16 +173,20 @@ class Regular(object):
                 x = random.randint(0,sum(buf.count('\n') for buf in buf_gen)-1)
                 num = 0
                 f.seek(0)
-                for line in f:
+                line = f.readline()
+                # for line in f:
+                while line:
                     if num == x:
                         img = 'https://gchat.qpic.cn/gchatpic_new/'+line.strip('\n')+'/0?term=3'
                         if img not in imgList:
+                            logging.info(f.tell())
                             imgList.append(img)
                             break
                         else:
                             break
                     else:
                         num += 1
+                    line = f.readline()
         return {
                 'status': 0,
                 'data': imgList
@@ -189,15 +196,22 @@ class Regular(object):
         os.makedirs('./CQImageUrl/', exist_ok=True)
         groupList = os.listdir('./CQImageUrl/')
         if groupList != []:
-            m = '各群标识:\n'
-            for i in groupList:
-                if i in self.GID_TO_GNAME.keys():
-                    m += i
+            # 详细信息
+            m = '基本信息:\n'
+            m += '总数: {}张\n'.format(self.getCQImageUrlInfo(True)['count'])
+            for gid in groupList:
+                if gid in self.GID_TO_GNAME.keys():
+                    m += self.GID_TO_GNAME[gid]
                     m += ': '
-                    m += self.GID_TO_GNAME[i]
-                    m += '\n'
-                else:
-                    pass
+                    m += str(self.getCQImageUrlInfo(gid, self.GID_TO_GNAME[gid])['count'])
+                    m += '张\n'
+            
+            m += '''\n基本功能:
+1.派蒙图库->获取全部群代号的图片总张数以及每个群的张数
+2.派蒙图库#群代号->获取这个群的图片总数
+3.消息中含有关键词 派蒙 图 即可获取图片
+4.向上述消息中加入关键词 群代号可发指定群的图片
+5.还能向消息中添加如 3张 这样的关键词获取指定数量的图片'''
             return {
                 'status': 0,
                 'data': m
@@ -210,4 +224,7 @@ class Regular(object):
 
 if __name__ == '__main__':
     pass
-    print(Regular().getCQImage('649451770', '10'))
+    # message = '[CQ:reply,id=645016453][CQ:at,qq=2980293094] del'
+    # m = re.findall(r'\[CQ:reply,id=(-?[0-9]+)]\[CQ:at,qq=2980293094]', message)
+    # print(m)
+    Regular().getCQImage('649451770', '5')

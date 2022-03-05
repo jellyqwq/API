@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import asyncio
-from calendar import c
 import time
 import websockets
 import json
@@ -49,6 +48,19 @@ class Robot(object):
                 }
             )
         )
+    
+    async def getMessage(self, id):
+        await self.websockets.send(
+            json.dumps(
+                {
+                    "action": "get_msg",
+                    "params": {
+                        "message_id": int(id),
+                    }
+                }
+            )
+        )
+        return json.loads(await self.websockets.recv())
     
     # @https://github.com/MeteorsLiu/PyBot
     async def atri_sendImage(self, b64, group_id):
@@ -130,16 +142,13 @@ class Robot(object):
     async def sendPaimonMessage(self, message, gid):
         if '功能' in message:
             await self.sendMessage('有什么感兴趣的功能吗?\n1.热搜d=====(￣▽￣*)b\n2.b站视链展示(。・∀・)ノ\n3.GitHub:https://github.com/jellyqwq/Paimon\n[CQ:image,file={}]'.format('https://i0.hdslb.com/bfs/article/1fbf0b10c5bf4fc324fbf7a53e42600982e9a382.gif'),gid)
-        elif '查群' in message:
-            await self.sendMessage(requests.get('http://api.jellyqwq.com:6702/parse/getgroupinfo').json()['data'], gid)
         elif '派蒙图库' in message:
             # 派蒙图库#nmg
             if '派蒙图库#' in message:
                 await self.sendMessage(requests.get('http://api.jellyqwq.com:6702/parse/cqimginfo?gid={}&groupname={}'.format(gid, message[5:])).json()['data'], gid)
             elif '派蒙图库' == message:
-                await self.sendMessage(requests.get('http://api.jellyqwq.com:6702/parse/cqimginfo?gid={}'.format(gid)).json()['data'], gid)
+                await self.sendMessage(requests.get('http://api.jellyqwq.com:6702/parse/getgroupinfo').json()['data'], gid)
         elif '图' in message:
-            
             dict_replace = {
                 '一': '1',
                 '俩': '2',
@@ -193,6 +202,12 @@ class Robot(object):
             await self.sendMessage('你好!', gid)
         else:
             await self.sendMessage('前面的区域,以后再来探索吧', gid)
+    
+    async def delPaimonPicture(self, message, gid):
+        i = re.findall(r'\[CQ:reply,id=(-?[0-9]+)]\[CQ:at,qq=2980293094]', message)[0]
+        m = await self.getMessage(i)
+        await self.sendMessage('id: {}'.format(m), gid)
+        
 
 loop = asyncio.get_event_loop()
 
@@ -249,7 +264,10 @@ async def echo(websocket, path):
                         await robot.sendMessage(requests.get('http://api.jellyqwq.com:6702/weibo/hotword').json()['data'],gid)
 
                     if '派蒙' in message['message']:
-                        await robot.sendPaimonMessage(message['message'], gid)     
+                        await robot.sendPaimonMessage(message['message'], gid)
+
+                    if 'CQ:reply' in message['message'] and '[CQ:at,qq=2980293094]' in message['message'] and 'del' in message['message']:
+                        await robot.delPaimonPicture(message['message'],gid)
 
 async def main():
     async with websockets.serve(echo, "127.0.0.1", 6701):
