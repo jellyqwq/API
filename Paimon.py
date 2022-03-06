@@ -7,6 +7,7 @@ import json
 import logging
 import requests
 import re
+import collections
 
 logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
 
@@ -20,6 +21,7 @@ class Robot(object):
                 'ys': '130516740',
                 'gal': '605650659',
                 }
+        self.IMAGE_CACHE_DICT = collections.OrderedDict()
 
     # 发送消息
     async def sendMessage(self, m, group_id):

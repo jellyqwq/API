@@ -6,7 +6,6 @@ import requests
 import os
 import time
 import random
-import collections
 
 logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
 
@@ -24,7 +23,7 @@ class Regular(object):
             '130516740': 'ys',
             '605650659': 'gal',
         }
-        self.IMAGE_CACHE_DICT = collections.OrderedDict()
+        
     
     # 将b站域名下的视频url提取av或bv号
     def biliVideoUrl(self, message):
