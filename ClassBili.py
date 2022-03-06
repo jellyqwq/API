@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-#!/usr/bin/env python
 
 import requests
 import logging
@@ -225,7 +224,7 @@ if __name__ == '__main__':
     paib = Bili()
     # a = paib.getDynamicInfo('594877314370747257')##627795919422504831
     # a = paib.getDynamicInfo('627795919422504831')#631421997174226993#
-    a = paib.biliVideoInfo('av706')
+    a = paib.toBiliShortUrl('https://t.bilibili.com/578518771791988357?tab=2')
     print(a)
 
 

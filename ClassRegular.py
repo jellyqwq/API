@@ -24,7 +24,6 @@ class Regular(object):
             '605650659': 'gal',
         }
         
-    
     # 将b站域名下的视频url提取av或bv号
     def biliVideoUrl(self, message):
         try:
@@ -45,8 +44,7 @@ class Regular(object):
     # 将b23.tv域名下的重定向地址返回
     def biliShortUrl(self, message):
         try:
-            patternBiliShortLink = re.compile(r'http(s)://b23.tv/[a-zA-Z0-9]+')
-            biliShortLinkUrl = re.search(patternBiliShortLink, message).group()
+            biliShortLinkUrl = re.findall(r'http(?:s)://b23.tv/[a-zA-Z0-9]+', message)[0]
             # logging.info('biliShortLinkUrl:{}'.format(biliShortLinkUrl))
             response = requests.get(biliShortLinkUrl, allow_redirects=False) #关闭重定向,取请求标头
             response = dict(response.headers)
@@ -60,7 +58,7 @@ class Regular(object):
             logging.error('biliShortUrl match failed(+_+)?')
             return {
                 'status': -5,
-                'data': response
+                'data': 'biliShortUrl match failed(+_+)?'
                 }
     
     # 动态url地址
@@ -158,14 +156,15 @@ class Regular(object):
         CQImageList = os.listdir('./CQImageUrl/{}/'.format(gid))
         from itertools import (takewhile, repeat)
         buffer = 1024 * 1024
-        imgList = []
+        imgDict = {}
         count = self.getCQImageUrlInfo(gid, self.GID_TO_GNAME[gid])['count']
         if count < int(imgnum):
             return {
                 'status': -5,
                 'data': '群{}图库数量不足'.format(self.GID_TO_GNAME[gid])
             }
-        while len(imgList) != int(imgnum) and count >= int(imgnum):
+        while len(imgDict) != int(imgnum) and count >= int(imgnum):
+            imgList = []
             r = random.randint(0,len(CQImageList)-1)
             with open('./CQImageUrl/{}/{}'.format(gid, CQImageList[r]), 'r', encoding='utf-8') as f:
                 buf_gen = takewhile(lambda x: x, (f.read(buffer) for _ in repeat(None)))
@@ -173,13 +172,17 @@ class Regular(object):
                 num = 0
                 f.seek(0)
                 line = f.readline()
-                # for line in f:
                 while line:
                     if num == x:
-                        img = 'https://gchat.qpic.cn/gchatpic_new/'+line.strip('\n')+'/0?term=3'
-                        if img not in imgList:
-                            logging.info(f.tell())
-                            imgList.append(img)
+                        hashv = line.strip('\n')[-32:]
+                        imgurl = 'https://gchat.qpic.cn/gchatpic_new/'+line.strip('\n')+'/0?term=3'
+                        if hashv not in imgDict.keys():
+                            logging.info(hashv)
+                            this = f.tell()
+                            logging.info(this)
+                            path = './CQImageUrl/{}/{}'.format(gid, CQImageList[r])
+                            imgList = [imgurl, path, this]
+                            imgDict[hashv] = imgList
                             break
                         else:
                             break
@@ -188,7 +191,7 @@ class Regular(object):
                     line = f.readline()
         return {
                 'status': 0,
-                'data': imgList
+                'data': imgDict
             }
         
     def getGroupInfo(self):
@@ -220,10 +223,53 @@ class Regular(object):
                 'status': -5,
                 'data': '没有群信息哦'
             }
+        
+    # def deleteImage(self, path, this):
+    def deleteImage(self, path, hashv):
+        try:
+            # with open(path, 'r+', encoding='utf-8') as f:
+            #     count = 0
+            #     s = ''
+            #     default_this = int(this)
+            #     f.seek(default_this)
+            #     while True:
+            #         default_this -= 1
+            #         if default_this < 0:
+            #             break
+            #         f.seek(default_this)
+            #         x = f.read(1)
+            #         if x == '\n' and count == 1:
+            #             break
+            #         elif x == '\n':
+            #             s = x + s
+            #             count += 1
+            #         else:
+            #             s = x + s
+
+            f = open(path, 'r', encoding='utf-8')
+            lines = f.readlines()
+            print(lines)
+            f.close()
+
+            f = open(path, 'w', encoding='utf-8')
+            for line in lines:
+                if hashv not in line:
+                    f.write(line)
+            f.close()
+            return {
+                'status': 0,
+                'data': '删除成功',
+            }
+        except:
+            return {
+                'status': -5,
+                'data': '删除失败'
+            }
 
 if __name__ == '__main__':
     pass
     # message = '[CQ:reply,id=645016453][CQ:at,qq=2980293094] del'
     # m = re.findall(r'\[CQ:reply,id=(-?[0-9]+)]\[CQ:at,qq=2980293094]', message)
     # print(m)
-    Regular().getCQImage('649451770', '5')
+    print(Regular().deleteImage('./CQImageUrl/888/2022-03.txt', '032F5CB885B7C946975CE12531887295'))
+    # print(Regular().biliShortUrl('https://b23.tv/gVcQEc8'))

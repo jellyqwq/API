@@ -101,5 +101,13 @@ def parse_getgroupinfo():
     from ClassRegular import Regular
     return json.dumps(Regular().getGroupInfo(), ensure_ascii=False)
 
+@api.route('/parse/delete_image', methods=['GET'])
+def parse_delete_image():
+    from ClassRegular import Regular
+    path = flask.request.values.get('path')
+    # this = flask.request.values.get('this')
+    hashv = flask.request.values.get('hashv')
+    return json.dumps(Regular().deleteImage(path, hashv), ensure_ascii=False)
+
 if __name__ == '__main__':
     api.run(port=6702, debug=True, host='127.0.0.1')
