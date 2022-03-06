@@ -10,8 +10,10 @@ import requests
 import websockets
 
 logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
+IMAGE_CACHE_DICT = collections.OrderedDict()
 
 class Robot(object):
+    global IMAGE_CACHE_DICT
     def __init__(self, websocket, loop):
         self.websockets = websocket
         self.loop = loop
@@ -21,7 +23,7 @@ class Robot(object):
                 'ys': '130516740',
                 'gal': '605650659',
                 }
-        self.IMAGE_CACHE_DICT = collections.OrderedDict()
+        
 
     # 发送消息
     async def sendMessage(self, m, group_id):
@@ -194,23 +196,23 @@ class Robot(object):
 
                 # 缓存写入部分
                 MAX_CACHE_NUM = 50
-                temp_dict = self.IMAGE_CACHE_DICT.copy()
+                temp_dict = IMAGE_CACHE_DICT.copy()
                 while True:
-                    if MAX_CACHE_NUM - len(self.IMAGE_CACHE_DICT) >= len(r['data']):
+                    if MAX_CACHE_NUM - len(IMAGE_CACHE_DICT) >= len(r['data']):
                         data = r['data']
                         for i in data.keys():
                             l = data[i]
                             # {hash:path,...}
-                            self.IMAGE_CACHE_DICT[i] = l[1]
-                            # self.IMAGE_CACHE_DICT[i] = [l[1], l[2]]
+                            IMAGE_CACHE_DICT[i] = l[1]
+                            # IMAGE_CACHE_DICT[i] = [l[1], l[2]]
                         break
                     else:
-                        pop_num = len(r['data']) - (MAX_CACHE_NUM - len(self.IMAGE_CACHE_DICT))
+                        pop_num = len(r['data']) - (MAX_CACHE_NUM - len(IMAGE_CACHE_DICT))
                         for i in temp_dict.keys():
                             if pop_num == 0:
                                 break
                             else:
-                                self.IMAGE_CACHE_DICT.pop(i)
+                                IMAGE_CACHE_DICT.pop(i)
                                 pop_num -= 1
                 
                 # 发图
@@ -230,12 +232,16 @@ class Robot(object):
     async def delPaimonPicture(self, message, gid):
         mid = re.findall(r'\[CQ:reply,id=(-?[0-9]+)]\[CQ:at,qq=2980293094]', message)[0]
         m = await self.getMessage(mid)
-        message = m['data']['message']
-        hashv = re.findall(r'https://gchat.qpic.cn/gchatpic_new/[0-9]+/[0-9]+-[0-9]+-([0-9A-Z]+)/0\?term',message)[0]
         try:
-            path = self.IMAGE_CACHE_DICT[hashv]
+            message = m['data']['message']
+        except:
+            logging.error(m)
+            
+        try:
+            hashv = re.findall(r'https://gchat.qpic.cn/gchatpic_new/[0-9]+/[0-9]+-[0-9]+-([0-9A-Z]+)/0\?term',message)[0]
+            path = IMAGE_CACHE_DICT[hashv]
             r = requests.get('http://api.jellyqwq.com:6702/parse/delete_image?path={}&hashv={}'.format(path, hashv)).json()
-            self.IMAGE_CACHE_DICT.pop(hashv)
+            IMAGE_CACHE_DICT.pop(hashv)
             await self.sendMessage(r['data'], gid)
         except:
             await self.sendMessage('删穷水尽', gid)
