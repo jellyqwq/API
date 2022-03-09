@@ -27,8 +27,8 @@ class Regular(object):
     # 将b站域名下的视频url提取av或bv号
     def biliVideoUrl(self, message):
         try:
-            patternBili = re.compile(r'video/([a-zA-Z0-9]+)')
-            abcode = re.findall(patternBili, message)[0]
+            # logging.info(message)
+            abcode = re.findall(r'video/([a-zA-Z0-9]+)', message)[0]
             # logging.info('abcode:{}'.format(abcode))
             return {
                 'status': 0, 
@@ -38,7 +38,8 @@ class Regular(object):
             logging.error('biliVideoUrl match failed(+_+)?')
             return {
                 'status': -5,
-                'data': 'biliVideoUrl match failed(+_+)?'
+                'data': 'biliVideoUrl match failed(+_+)?',
+                'error': '{}'.format(message)
                 }
 
     # 将b23.tv域名下的重定向地址返回
@@ -268,8 +269,9 @@ class Regular(object):
 
 if __name__ == '__main__':
     pass
+    x = '&#91;&#91;QQ小程序&#93;哔哩哔哩&#93;请使用最新版本手机QQ 查看[CQ:json,data={"app":"com.tencent.miniapp_01"&#44;"desc":""&#44;"view":"view_8C8E89B49BE609866298ADDFF2DBABA4"&#44;"ver":"1.0.0.19"&#44;"prompt":"&#91;QQ小程序&#93;哔哩哔哩"&#44;"meta":{"detail_1":{"appid":"1109937557"&#44;"appType":0&#44;"title":"哔哩哔哩"&#44;"desc":"【科普速递】M1 Ultra真的只是两个M1 Max复制粘贴吗？UltraFusion技术详解"&#44;"icon":"https:\/\/miniapp.gtimg.cn\/public\/appicon\/51f90239b78a2e4994c11215f4c4ba15_200.jpg"&#44;"preview":"https:\/\/i2.hdslb.com\/bfs\/archive\/26ab17f035b51e37cc6af696dcc600bf5a6fd23f.jpg@500w_400h_1e_1c.webp"&#44;"url":"m.q.qq.com\/a\/s\/6c1aeb68437b7f5e751657f06103535d"&#44;"scene":0&#44;"host":{"uin":577430840&#44;"nick":"Jelly"}&#44;"shareTemplateId":"8C8E89B49BE609866298ADDFF2DBABA4"&#44;"shareTemplateData":{}&#44;"qqdocurl":"https:\/\/www.bilibili.com\/video\/BV1TY411V78p"&#44;"showLittleTail":""&#44;"gamePoints":""&#44;"gamePointsUrl":""}}&#44;"config":{"type":"normal"&#44;"width":0&#44;"height":0&#44;"forward":1&#44;"autoSize":0&#44;"ctime":1646824549&#44;"token":"4f35afcfb6b58f87f051d52e58df9a31"}}]'
     # message = '[CQ:reply,id=645016453][CQ:at,qq=2980293094] del'
-    # m = re.findall(r'\[CQ:reply,id=(-?[0-9]+)]\[CQ:at,qq=2980293094]', message)
+    # m = re.findall(r'')
     # print(m)
-    print(Regular().deleteImage('./CQImageUrl/888/2022-03.txt', '032F5CB885B7C946975CE12531887295'))
+    print(Regular().biliVideoUrl(x))
     # print(Regular().biliShortUrl('https://b23.tv/gVcQEc8'))

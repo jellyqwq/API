@@ -93,6 +93,8 @@ class Robot(object):
 
     # b站的信息转发模块
     async def sendBiliMessage(self, message, gid):
+        message = message.replace('\\','')
+        logging.info(message)
         # 当动态域名在消息中
         if 't.bilibili.com' in message or 'm.bilibili.com' in message:
             i = requests.get('http://api.jellyqwq.com:6702/parse/bdynamci?message={}'.format(message)).json()
@@ -119,6 +121,10 @@ class Robot(object):
         # https://www.bilibili.com/video/BV1db4y1e7B2
         # 当视频链接存在于b站域名下时
         elif 'bilibili.com/video' in message:
+            try:
+                message = re.findall(r'video/[0-9A-Za-z]+', message)[0]
+            except:
+                pass
             r = requests.get('http://api.jellyqwq.com:6702/parse/abcode?message={}'.format(message)).json()
             if r['status'] == 0:
                 info = requests.get('http://api.jellyqwq.com:6702/bili/videoinfo?abcode={}'.format(r['data'])).json()
@@ -130,6 +136,7 @@ class Robot(object):
                 else:
                     await self.sendMessage(info['data'], gid)
             else:
+                logging.error(r['error'])
                 await self.sendMessage(r['data'], gid)
         
     async def sendB23Message(self, message, gid):
@@ -267,8 +274,10 @@ async def echo(websocket, path):
                 gid = message['group_id']
                 try:
                     logging.info(message['message'])
+                    logging.info(type(message['message']))
                 except:
                     logging.info(message)
+                    # logging.info(type(message))
                 else:  
                     # atri pixiv model
                     if 'paipi' == message['message'][:5]:
@@ -283,6 +292,9 @@ async def echo(websocket, path):
                                 await robot.sendPicture(name, num, gid)
                             else:
                                 await robot.sendMessage('图片过多', gid)
+                    
+                    # if 'bilibili.com' in message['message']:
+                    #     await robot.sendBiliMessage(message['message'], gid)
                     
                     if 'bilibili.com' in message['message']:
                         await robot.sendBiliMessage(message['message'], gid)
