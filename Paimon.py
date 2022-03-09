@@ -136,7 +136,7 @@ class Robot(object):
                 else:
                     await self.sendMessage(info['data'], gid)
             else:
-                logging.error(r['error'])
+                # logging.error(r['error'])
                 await self.sendMessage(r['data'], gid)
         
     async def sendB23Message(self, message, gid):
@@ -274,7 +274,7 @@ async def echo(websocket, path):
                 gid = message['group_id']
                 try:
                     logging.info(message['message'])
-                    logging.info(type(message['message']))
+                    # logging.info(type(message['message']))
                 except:
                     logging.info(message)
                     # logging.info(type(message))
