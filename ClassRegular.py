@@ -266,6 +266,11 @@ class Regular(object):
                 'status': -5,
                 'data': '删除失败'
             }
+    
+    def new_words_save(self, word):
+        with open('new_words.txt', 'a+', encoding='utf-8') as f:
+            f.write(word)
+
 
 if __name__ == '__main__':
     pass

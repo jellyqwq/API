@@ -5,18 +5,30 @@ import collections
 import json
 import logging
 import re
-
+# from gensim.models import Word2Vec
 import requests
 import websockets
+# import jieba
+# import random
+from werkzeug._reloader import run_with_reloader
 
 logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
 IMAGE_CACHE_DICT = collections.OrderedDict()
 
 class Robot(object):
     global IMAGE_CACHE_DICT
+    
     def __init__(self, websocket, loop):
         self.websockets = websocket
         self.loop = loop
+        # self.model = Word2Vec.load('wv_plus2.model')
+        # self.stopword_set = set()
+        # self.model_word_dict = self.model.wv.key_to_index
+        # with open('stopwords.txt', 'r', encoding= 'utf-8') as stopwords:
+        #     for stopword in stopwords:
+        #         self.stopword_set.add(stopword.strip('\n'))
+        # jieba.set_dictionary('dict.txt.big')
+        
         self.GNAME_TO_GID = {
                 'nmg': '649451770',
                 'qwq': '980514385',
@@ -152,6 +164,25 @@ class Robot(object):
     async def sendPaimonMessage(self, message, gid):
         if '功能' in message:
             await self.sendMessage('有什么感兴趣的功能吗?\n1.热搜d=====(￣▽￣*)b\n2.b站视链展示(。・∀・)ノ\n3.GitHub:https://github.com/jellyqwq/Paimon\n[CQ:image,file={}]'.format('https://i0.hdslb.com/bfs/article/1fbf0b10c5bf4fc324fbf7a53e42600982e9a382.gif'),gid)
+        elif '逆序数' in message:
+            try:
+                num = re.findall(r'[0-9]+', message)[0]
+                list_1 = []
+                for i in num:
+                    list_1.append(int(i))
+                list_2 = []
+                for i in list_1:
+                    count = 0
+                    for j in list_1[:list_1.index(i)]:
+                        if j > i:
+                            count += 1
+                    list_2.append(count)
+                result = 0
+                for i in list_2:
+                    result += i
+                await self.sendMessage('{}的逆序数为{}'.format(num, result), gid)
+            except:
+                pass
         elif '派蒙图库' in message:
             # 派蒙图库#nmg
             if '派蒙图库#' in message:
@@ -227,14 +258,30 @@ class Robot(object):
                     await self.sendImage(image[0], gid)
             else:
                 await self.sendMessage(r['data'], gid)
-        elif '应急' in message or '食品' in message:
-            await self.sendMessage('欸,派蒙不是吃的\n[CQ:image,file={}]'.format('https://i0.hdslb.com/bfs/article/d0ce4f650c8a398fe5ff2e1a5705e59d24ba8091.jpg'), gid)
-        elif '恰饭' in message or '吃饭' in message:
-            await self.sendMessage('好耶开饭咯,我要吃甜甜花酿鸡\n[CQ:image,file={}]'.format('https://i0.hdslb.com/bfs/article/2d07fbb5269025d3690186164a50cd0f6b9127a6.gif'), gid) 
         elif '派蒙' == message:
             await self.sendMessage('你好!', gid)
+        # else:
+        #     message = message.replace('派蒙', '')
+        #     words = jieba.cut(message, cut_all=False)
+        #     back = []
+        #     for word in words:
+        #         if word not in self.stopword_set:
+        #             back.append(word)
+        #     logging.info(f'back_words: {back}')
+        #     m = ''
+        #     for i in back:
+        #         if i in self.model_word_dict.keys():
+        #             r = self.model.wv.most_similar(positive=i) 
+        #             m += r[random.randint(0, len(r))][0]
+        #         elif i != '':
+        #             with open('new_words.txt', 'a+', encoding='utf-8') as f:
+        #                 f.write(i+'\n')
+        #         else:
+        #             pass
+        #     if m != '':
+        #         await self.sendMessage(f'要找 {m} 吗?', gid)
         else:
-            await self.sendMessage('前面的区域,以后再来探索吧', gid)
+            await self.sendMessage('前面的区域以后再来探索吧!', gid)
     
     async def delPaimonPicture(self, message, gid):
         mid = re.findall(r'\[CQ:reply,id=(-?[0-9]+)]\[CQ:at,qq=2980293094]', message)[0]
@@ -252,7 +299,7 @@ class Robot(object):
             await self.sendMessage(r['data'], gid)
         except:
             await self.sendMessage('删穷水尽', gid)
-
+    
 loop = asyncio.get_event_loop()
 
 async def echo(websocket, path):
@@ -323,10 +370,13 @@ async def main():
     async with websockets.serve(echo, "127.0.0.1", 6701):
         await asyncio.Future()  # run forever
 
-if __name__ == "__main__":
+def main_loop():
     try:
         loop.run_until_complete(main())
     except KeyboardInterrupt:
         loop.close()
     except:
         raise
+
+if __name__ == "__main__":
+    run_with_reloader(main_loop)

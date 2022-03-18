@@ -109,5 +109,11 @@ def parse_delete_image():
     hashv = flask.request.values.get('hashv')
     return json.dumps(Regular().deleteImage(path, hashv), ensure_ascii=False)
 
+@api.route('/parse/save_new_word', methods=['GET'])
+def parse_save_new_word():
+    from ClassRegular import Regular
+    new_word = flask.request.values.get('new_word')
+    return json.dumps(Regular().new_words_save(new_word), ensure_ascii=False)
+
 if __name__ == '__main__':
     api.run(port=6702, debug=True, host='127.0.0.1')
